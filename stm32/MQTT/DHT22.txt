@@ -1,0 +1,42 @@
+设备名称（clientID）：device01
+产品ID：（username）：M4G6ztRO3H
+key：设备密钥 VmVXQjJaSzIweHdGdW1XcU5FU2ZVTnNPNHZWaWhNeWE=
+password：
+version=2018-10-31&res=products%2FM4G6ztRO3H%2Fdevices%2Fdevice01&et=1773839760&method=md5&sign=jvmuZbJk8hyGRlXFPA1Y1w%3D%3D
+
+
+res:products/{产品id}/devices/{设备名字}
+res:products/X0ESctMrzD/devices/device01
+
+et：时间戳（https://www.xbgjw.com/timestamp）
+et:1773839760
+
+
+
+URL：mqtts.heclouds.com
+端口号：1883
+
+$sys/{pid}/{device-name}/thing/property/post/reply
+
+功能：设备属性上报请求/设备属性上报响应
+主题：$sys/{pid}/{device-name}/thing/property/post	（发布）
+          $sys/{pid}/{device-name}/thing/property/post/reply 	（订阅）
+
+	$sys/M4G6ztRO3H/device01/thing/property/post
+	$sys/M4G6ztRO3H/device01/thing/property/post/reply
+在线JSON解析工具：https://www.json.cn/
+JSON数据包：
+{
+	"id":"123456",
+	"version":"1.0",
+	"params":{
+		"Humi":{
+			"value":12.5
+		},
+		"Temp":{
+			"value":30.3
+		}
+	}
+}
+压缩后的JSON数据包：
+{"id":"123456","version":"1.0","params":{"Humi":{"value":12.5},"Temp":{"value":30.3}}}
