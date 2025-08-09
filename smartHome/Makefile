@@ -32,7 +32,7 @@ obj/%.o:src/%.c		#obj/.o文件依赖于src/的.c文件
 
 $(TARGET) :$(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
-	scp obj/smarthome src/face.py ini/gdevice.ini orangepi@192.168.0.6:/home/orangepi
+#	scp obj/smarthome src/face.py ini/gdevice.ini orangepi@192.168.0.6:/home/orangepi
 #	scp obj/smarthome src/face.py ini/gdevice.ini orangepi@192.168.43.7:/home/orangepi
 complie :$(TARGET)
 clean: 
