@@ -1,0 +1,22 @@
+CC := gcc
+CFLAGS := -Iinclude
+CFLAGS += -c
+TARGET := bin/calc
+DEPEND := obj/math.o
+DEPEND += obj/mycalc.o
+
+#书写规则：将最后生成的可执行文件放在最上边，然后指定它所依赖的文件
+$(TARGET):$(DEPEND)
+	$(CC) -o $@ $^
+obj/%.o:src/%.c
+	$(CC) -o $@ $(CFLAGS) $<
+
+#obj/math.o:src/math.c
+#	$(CC) -o $@ -c $<
+#obj/mycalc.o:src/mycalc.c
+#	$(CC) -o $@ $(CFLAGS) $<
+#这里的mycalc.c文件里用到include目录下的头文件，所以要指定头文件的目录
+
+.PHONY:clean
+clean:
+	rm -rf $(TARGET) $(DEPEND)

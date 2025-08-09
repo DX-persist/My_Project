@@ -1,0 +1,12 @@
+CC:=gcc
+SRC:=src
+OBJ:=obj
+INCLUDE:=include
+TARGET:=bin/cat
+
+SRCS = $(wildcard $(SRC)/*.c)
+OBJS = $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
+debug:
+	
+	echo $(SRCS)
+	echo $(OBJS)
