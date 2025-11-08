@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+#define CHECK_TCP_ERR(cond, failure_msg, retval)		\
+	do{													\
+		if(cond == -1){									\
+			fprintf(stderr, "%s\n",failure_msg);		\
+			perror(failure_msg);						\
+			return retval;								\
+		}												\
+	}while(0)											
+
+int main(int argc, char **argv)
+{
+	if(argc < 3){
+		fprintf(stderr, "Usage: [%s] [IP] [Port]\n",argv[0]);
+		return -1;
+	}
+
+	int sockfd = -1;
+	int retval = -1;
+	struct sockaddr_in serveraddr;
+	char buffer[32];
+
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	CHECK_TCP_ERR(sockfd, "socket error", -1);
+
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_port = htons(atoi(argv[2]));
+	inet_pton(AF_INET, argv[1], &serveraddr.sin_addr.s_addr);
+
+	retval = connect(sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
+	CHECK_TCP_ERR(retval, "connect error", -1);
+
+	memset(buffer, '\0', sizeof(buffer));
+	retval = read(sockfd, buffer, sizeof(buffer));
+	CHECK_TCP_ERR(retval, "read error", -1);
+
+	write(STDOUT_FILENO, buffer, sizeof(buffer));
+
+	close(sockfd);
+
+	return 0;
+}

@@ -4,9 +4,13 @@
 #include <unistd.h>
 #include <assert.h>
 #include <time.h>
+#include <errno.h>
 #include <signal.h>
+#include <sys/wait.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <pthread.h>
+#include "msg.h"
 
 typedef struct{
 	char ip[16];				//存储IP地址字符串
@@ -16,6 +20,11 @@ typedef struct{
 	socklen_t addrlen;			//地址结构长度
 	int retval;					//函数返回值，用于错误检查
 }socket_config_t;
+
+typedef struct{
+	int sockfd;
+	unsigned long int main_tid;
+}temp_t;
 
 #define CHECK_ERROR(condition, errmsg)	\
 	do{									\
@@ -40,12 +49,13 @@ socket_config_t client;
 void signal_handler(int signum)
 {
 	//收到Ctrl+C信号关闭套接字描述符
-	char *exit_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
+	char *sigint_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
 	if(signum == SIGINT){
-		write(STDOUT_FILENO, exit_msg, strlen(exit_msg));
+		write(STDOUT_FILENO, sigint_msg, strlen(sigint_msg));
 		close(server.sockfd);
 		exit(EXIT_SUCCESS);
 	}
+
 }
 
 int create_socket(int *sockfd)
@@ -80,6 +90,7 @@ int get_hostaddress(char *cmd, socket_config_t *server)
 		fprintf(stderr, "Failed to get vaild IP address\n");
 		return -1;
 	}
+
 	return 0;
 }
 
@@ -119,50 +130,75 @@ int listen_func(socket_config_t *server)
 	return 0;
 }
 
-void out_client_msg(socket_config_t *client)
+void out_client_msg(int sockfd)
 {
-	assert(client != NULL);
-
 	int port;
 	char ip[16];
 
 	memset(ip, '\0', sizeof(ip));
 
-	port = ntohs(client->addr.sin_port);
-	inet_ntop(AF_INET, &client->addr.sin_addr,ip, sizeof(ip));
+	//调用getpeername函数通过传入的套接字描述符获取客户端的IP地址和端口
+	struct sockaddr_in addr;
+	socklen_t addrlen = sizeof(addr);
 
+	getpeername(sockfd, (struct sockaddr *)&addr, &addrlen);
+
+	port = ntohs(addr.sin_port);
+	inet_ntop(AF_INET, &addr.sin_addr.s_addr,ip, sizeof(ip));
+	
 	fprintf(stdout, "Receive a connection: IP:[%s] Port:[%d] connected....\n",ip, port);
 }
 
 void commun_func(int new_fd)
 {
-	char read_buffer[48];
-	char write_buffer[48];
-	
-	memset(write_buffer, '\0', sizeof(write_buffer));
-	time_t now = time(NULL);
-	strncpy(write_buffer, ctime(&now), sizeof(write_buffer));
-	
-	//获取系统时间并通过套接字描述符写入给客户端
-	if(write(new_fd, write_buffer, strlen(write_buffer))
-		   			!= strlen(write_buffer)){
-		perror("write error");
-		return;
-	}
+	char buffer[512];
+	ssize_t size;
 
-	//获取来自客户端的消息
-	memset(read_buffer, '\0', sizeof(read_buffer));
-	if(read(new_fd, read_buffer, sizeof(read_buffer) - 1) < 0){
-		perror("read error");
-		return;
+	while(1){
+		memset(buffer, '\0', sizeof(buffer));
+		//size < 0表示read读取出错,可以通过perror函数查看errno
+		if((size = read_msg(new_fd, buffer, sizeof(buffer))) < 0){
+			perror("read error");
+			break;
+		//size = 0表示客户端关闭,对方可能调用了close或者shutdown	
+		}else if(size == 0){
+			fprintf(stderr, "peer closed the connection\n");
+			break;
+		//size > 0表示正常读取到了数据
+		}else{
+			printf("Server receive TID:[0x%lx] client's message is : %s\n",
+							(unsigned long)pthread_self(), buffer);	
+			//若向已经断开连接的客户端发送消息,则会收到SIGPIPE信号,并将errno设置为EPIPE
+			if(write_msg(new_fd, buffer, sizeof(buffer)) < 0){
+				if(errno == EPIPE){
+					fprintf(stderr, "peer closed the connection\n");
+					break;
+				}
+				perror("write error");
+			}
+		}
 	}
+}
 
-	printf("Server receive client's message is : %s\n",read_buffer);
+void *thread_func(void *arg)
+{
+	temp_t *temp = (temp_t *)arg;
+
+	out_client_msg(temp->sockfd);
+	printf("create new thread, thread id:[0x%lx] main thread id:[0x%lx]\n",
+					pthread_self(),temp->main_tid);
+	commun_func(temp->sockfd);
+	
+	close(temp->sockfd);
+	free(temp);
+
+	pthread_exit(NULL);
 }
 
 void accept_func(socket_config_t server, socket_config_t *client)
 {
 	client->addrlen = sizeof(client->addr);
+	
 
 	while(1){
 		int new_fd = accept(server.sockfd, 
@@ -172,10 +208,27 @@ void accept_func(socket_config_t server, socket_config_t *client)
 			perror("accept error");
 			continue;
 		}
-		out_client_msg(client);
-		commun_func(new_fd);
 
-		close(new_fd);
+		temp_t *temp = (temp_t *)malloc(sizeof(temp_t));
+		//获取主线程的线程ID
+		temp->sockfd = new_fd;
+		temp->main_tid = pthread_self();
+
+		//初始化线程属性
+		pthread_attr_t attr;
+		pthread_attr_init(&attr);
+		//设置线程属性为分离线程
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);	
+		
+		//创建线程与客户端进行通信
+		pthread_t tid;
+		if(pthread_create(&tid, &attr, thread_func, (void *)temp) != 0){
+			perror("pthread_create error");
+			continue;
+		}	
+
+		//销毁线程属性
+		pthread_attr_destroy(&attr);	
 	}
 }
 
@@ -189,7 +242,8 @@ int main(int argc, char **argv)
 
 	//向内核注册信号处理函数，当接收到对应的信号就转而去执行信号处理函数
 	CHECK_ERROR(signal(SIGINT, signal_handler) == SIG_ERR, 
-			"signal error");
+			"signal  sigint error");
+
 
 	//清空结构体内容
 	memset(&server, '\0', sizeof(server));
@@ -216,6 +270,7 @@ int main(int argc, char **argv)
 	CHECK_ERROR_CLEANUP(listen_func(&server) < 0, 
 			"Failed to listen the request", 
 			close(server.sockfd));
+
 
 	//4.允许客户端连接主机
 	accept_func(server, &client);

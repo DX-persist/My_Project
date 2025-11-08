@@ -5,9 +5,12 @@
 #include <string.h>
 #include <time.h>
 #include <assert.h>
+#include <pthread.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "dht22_config.h"
+
 
 typedef struct{
 	int port;
@@ -16,6 +19,7 @@ typedef struct{
 	socklen_t addrlen;
 	int retval;
 	int sockfd;
+	int accept_fd;
 }socket_config_t;
 
 #define CHECK_TCP_ERR(cond, failure_msg, retval)	\
@@ -66,18 +70,88 @@ void out_addr(socket_config_t *client_info)
 
 	client_info->port = ntohs(client_info->addr.sin_port);
 	inet_ntop(AF_INET, &client_info->addr.sin_addr.s_addr, client_info->ip, sizeof(client_info->ip));
-	printf("IP:[%s] Port:[%d] connected....\n",client_info->ip, client_info->port);
+	printf("Receive a connection: IP:[%s] Port:[%d] connected....\n",client_info->ip, client_info->port);
 }
 
 void commun_func(int fd)
 {
 	time_t t = time(NULL);
 	char buffer[32];
+	char readbuffer[32];
+
 
 	memset(buffer, '\0', sizeof(buffer));
+	memset(readbuffer, '\0', sizeof(readbuffer));
 	strncpy(buffer, ctime(&t), sizeof(buffer));
 
-	write(fd, buffer, strlen(buffer));
+	if(write(fd, buffer, strlen(buffer)) != strlen(buffer)){
+		perror("write error");
+		return;
+	}
+	
+	if(read(fd, readbuffer, sizeof(readbuffer)) < 0){
+		perror("read error");
+		return;
+	}
+	printf("Server receive client's message is : %s\n",readbuffer);
+}
+
+void get_msg(char *send_msg, size_t size)
+{
+	//1.获取时间
+	char time_buffer[32];
+
+	memset(time_buffer, '\0', sizeof(time_buffer));
+	memset(send_msg, '\0', size);
+
+	time_t t = time(NULL);
+	strncpy(time_buffer, ctime(&t), sizeof(time_buffer));
+	time_buffer[strcspn(time_buffer, "\n")] = '\0';
+	
+	//2.获取温湿度
+	DHT22_Data_t Data = {0};
+
+	if(DHT22_ReadData(&Data) != 0){
+		fprintf(stderr, "read dht22 error");
+		return;
+	}else{
+		snprintf(send_msg, size, "time:%s\t temperature:%.2f°C\t humidity:%.2f%%RH\n", 
+												time_buffer, Data.temperature, Data.humidity);	
+	}
+	
+}
+
+void handler_dht22(socket_config_t *client)
+{
+	assert(client != NULL);
+	
+	char send_msg[128];
+	
+	get_msg(send_msg, sizeof(send_msg));
+	
+	if(write(client->accept_fd, send_msg, strlen(send_msg)) != strlen(send_msg)){
+		perror("write error");
+	}
+}
+
+void *handler_func(void *arg)
+{
+	//1.输出客户端的地址
+	
+	assert(arg != NULL);
+	socket_config_t *client = (socket_config_t *)arg;
+
+	out_addr(client);
+
+	//2.获取温湿度与时间
+	handler_dht22(client);
+
+	//3.与客户端进行通信
+	//commun_func(client->accept_fd);
+
+	close(client->accept_fd);
+
+	pthread_exit(NULL);
 }
 
 int main(int argc, char **argv)
@@ -90,6 +164,11 @@ int main(int argc, char **argv)
 	if(signal(SIGINT, signal_handler) == SIG_ERR){
 		perror("signal SIGINT error");
 		return -1;
+	}
+
+	//初始化wiringPi库并配置为输出模式
+	if(wiringPiSetup() == -1){
+		fprintf(stderr, "failed to load lib wiringPi\n");
 	}
 
 	memset(&server, '\0', sizeof(socket_config_t));
@@ -128,11 +207,21 @@ int main(int argc, char **argv)
 			perror("accept error");
 			continue;
 		}
+		client.accept_fd = fd;
+		pthread_t tid;
+		pthread_attr_t attr;
 
-		out_addr(&client);
-		commun_func(fd);
+		//设置线程属性为分离线程
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
-		close(fd);
+		if(pthread_create(&tid, &attr, handler_func, (void *)&client) != 0){
+			perror("pthead_create error");
+			continue;
+		}
+
+		//销毁线程属性
+		pthread_attr_destroy(&attr);
 	}
 
 

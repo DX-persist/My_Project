@@ -4,9 +4,12 @@
 #include <unistd.h>
 #include <assert.h>
 #include <time.h>
+#include <errno.h>
 #include <signal.h>
+#include <sys/wait.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "msg.h"
 
 typedef struct{
 	char ip[16];				//存储IP地址字符串
@@ -40,11 +43,19 @@ socket_config_t client;
 void signal_handler(int signum)
 {
 	//收到Ctrl+C信号关闭套接字描述符
-	char *exit_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
+	char *sigint_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
 	if(signum == SIGINT){
-		write(STDOUT_FILENO, exit_msg, strlen(exit_msg));
+		write(STDOUT_FILENO, sigint_msg, strlen(sigint_msg));
 		close(server.sockfd);
 		exit(EXIT_SUCCESS);
+	}
+
+	//收到SIGCHLD信号表明子进程结束,父进程需要来回收它的资源
+	//防止子进程变成僵尸进程
+	char *sigchld_msg = "Received a signal is SIGCHLD, child process exit and parent process reclaims its' resources\n";	
+	if(signum == SIGCHLD){
+		write(STDOUT_FILENO, sigchld_msg, strlen(sigchld_msg));
+		wait(NULL);
 	}
 }
 
@@ -58,6 +69,9 @@ int create_socket(int *sockfd)
 
 int get_hostaddress(char *cmd, socket_config_t *server)
 {
+	//在开始之前首先忽略SIGCHLD信号
+	signal(SIGCHLD, SIG_IGN);
+
 	FILE *fp = popen(cmd, "r");
 	if(fp == NULL){
 		perror("popen error");
@@ -80,6 +94,9 @@ int get_hostaddress(char *cmd, socket_config_t *server)
 		fprintf(stderr, "Failed to get vaild IP address\n");
 		return -1;
 	}
+	
+	signal(SIGCHLD, signal_handler);
+
 	return 0;
 }
 
@@ -130,34 +147,40 @@ void out_client_msg(socket_config_t *client)
 
 	port = ntohs(client->addr.sin_port);
 	inet_ntop(AF_INET, &client->addr.sin_addr,ip, sizeof(ip));
-
+	
+	printf("child process id: %d, parent process id:%d\n",getpid(),getppid());
 	fprintf(stdout, "Receive a connection: IP:[%s] Port:[%d] connected....\n",ip, port);
 }
 
 void commun_func(int new_fd)
 {
-	char read_buffer[48];
-	char write_buffer[48];
-	
-	memset(write_buffer, '\0', sizeof(write_buffer));
-	time_t now = time(NULL);
-	strncpy(write_buffer, ctime(&now), sizeof(write_buffer));
-	
-	//获取系统时间并通过套接字描述符写入给客户端
-	if(write(new_fd, write_buffer, strlen(write_buffer))
-		   			!= strlen(write_buffer)){
-		perror("write error");
-		return;
+	char buffer[512];
+	ssize_t size;
+
+	while(1){
+		memset(buffer, '\0', sizeof(buffer));
+		//size < 0表示read读取出错,可以通过perror函数查看errno
+		if((size = read_msg(new_fd, buffer, sizeof(buffer))) < 0){
+			perror("read error");
+			break;
+		//size = 0表示客户端关闭,对方可能调用了close或者shutdown	
+		}else if(size == 0){
+			fprintf(stderr, "peer closed the connection\n");
+			break;
+		//size > 0表示正常读取到了数据
+		}else{
+			printf("Server receive PID:[%d] client's message is : %s\n",getpid(), buffer);	
+			//若向已经断开连接的客户端发送消息,则会收到SIGPIPE信号,并将errno设置为EPIPE
+			if(write_msg(new_fd, buffer, sizeof(buffer)) < 0){
+				if(errno == EPIPE){
+					fprintf(stderr, "peer closed the connection\n");
+					break;
+				}
+				perror("write error");
+			}
+		}
 	}
 
-	//获取来自客户端的消息
-	memset(read_buffer, '\0', sizeof(read_buffer));
-	if(read(new_fd, read_buffer, sizeof(read_buffer) - 1) < 0){
-		perror("read error");
-		return;
-	}
-
-	printf("Server receive client's message is : %s\n",read_buffer);
 }
 
 void accept_func(socket_config_t server, socket_config_t *client)
@@ -172,10 +195,21 @@ void accept_func(socket_config_t server, socket_config_t *client)
 			perror("accept error");
 			continue;
 		}
-		out_client_msg(client);
-		commun_func(new_fd);
-
-		close(new_fd);
+		
+		//创建子进程来完成通信
+		pid_t pid = fork();
+		if(pid < 0){
+			perror("fork error");
+			continue;
+		}else if(pid == 0){
+			//子进程输出客户端的信息并进行通信
+			out_client_msg(client);
+			commun_func(new_fd);
+			close(new_fd);
+			exit(0);
+		}else{
+			close(new_fd);
+		}
 	}
 }
 
@@ -189,7 +223,10 @@ int main(int argc, char **argv)
 
 	//向内核注册信号处理函数，当接收到对应的信号就转而去执行信号处理函数
 	CHECK_ERROR(signal(SIGINT, signal_handler) == SIG_ERR, 
-			"signal error");
+			"signal  sigint error");
+
+	CHECK_ERROR(signal(SIGCHLD, signal_handler) == SIG_ERR, 
+			"signal sigchld error");
 
 	//清空结构体内容
 	memset(&server, '\0', sizeof(server));

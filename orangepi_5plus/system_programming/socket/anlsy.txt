@@ -1,0 +1,327 @@
+No.     Time           Source                Destination           Protocol Length Info
+     16 8.145757120    192.168.0.32          192.168.0.40          TCP      74     42022 → 8888 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM=1 TSval=1047712727 TSecr=0 WS=128
+
+Frame 16: 74 bytes on wire (592 bits), 74 bytes captured (592 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 0, Len: 0
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 0    (relative sequence number)
+    Sequence Number (raw): 2062825443
+    [Next Sequence Number: 1    (relative sequence number)]
+    Acknowledgment Number: 0
+    Acknowledgment number (raw): 0
+    1010 .... = Header Length: 40 bytes (10)
+    Flags: 0x002 (SYN)
+    Window: 64240
+    [Calculated window size: 64240]
+    Checksum: 0x3f76 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (20 bytes), Maximum segment size, SACK permitted, Timestamps, No-Operation (NOP), Window scale
+    [Timestamps]
+
+No.     Time           Source                Destination           Protocol Length Info
+     17 8.145850161    192.168.0.40          192.168.0.32          TCP      74     8888 → 42022 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM=1 TSval=368447869 TSecr=1047712727 WS=128
+
+Frame 17: 74 bytes on wire (592 bits), 74 bytes captured (592 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74), Dst: 20:c5:7c:26:09:da (20:c5:7c:26:09:da)
+Internet Protocol Version 4, Src: 192.168.0.40, Dst: 192.168.0.32
+Transmission Control Protocol, Src Port: 8888, Dst Port: 42022, Seq: 0, Ack: 1, Len: 0
+    Source Port: 8888
+    Destination Port: 42022
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 0    (relative sequence number)
+    Sequence Number (raw): 1015556075
+    [Next Sequence Number: 1    (relative sequence number)]
+    Acknowledgment Number: 1    (relative ack number)
+    Acknowledgment number (raw): 2062825444
+    1010 .... = Header Length: 40 bytes (10)
+    Flags: 0x012 (SYN, ACK)
+    Window: 65160
+    [Calculated window size: 65160]
+    Checksum: 0xafe6 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (20 bytes), Maximum segment size, SACK permitted, Timestamps, No-Operation (NOP), Window scale
+    [Timestamps]
+    [SEQ/ACK analysis]
+
+No.     Time           Source                Destination           Protocol Length Info
+     18 8.147717098    192.168.0.32          192.168.0.40          TCP      66     42022 → 8888 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=1047712730 TSecr=368447869
+
+Frame 18: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 1, Ack: 1, Len: 0
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 2062825444
+    [Next Sequence Number: 1    (relative sequence number)]
+    Acknowledgment Number: 1    (relative ack number)
+    Acknowledgment number (raw): 1015556076
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x010 (ACK)
+    Window: 502
+    [Calculated window size: 64256]
+    [Window size scaling factor: 128]
+    Checksum: 0xdb42 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+
+No.     Time           Source                Destination           Protocol Length Info
+     19 8.148454423    192.168.0.40          192.168.0.32          TCP      91     8888 → 42022 [PSH, ACK] Seq=1 Ack=1 Win=65280 Len=25 TSval=368447871 TSecr=1047712730
+
+Frame 19: 91 bytes on wire (728 bits), 91 bytes captured (728 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74), Dst: 20:c5:7c:26:09:da (20:c5:7c:26:09:da)
+Internet Protocol Version 4, Src: 192.168.0.40, Dst: 192.168.0.32
+Transmission Control Protocol, Src Port: 8888, Dst Port: 42022, Seq: 1, Ack: 1, Len: 25
+    Source Port: 8888
+    Destination Port: 42022
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 25]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 1015556076
+    [Next Sequence Number: 26    (relative sequence number)]
+    Acknowledgment Number: 1    (relative ack number)
+    Acknowledgment number (raw): 2062825444
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x018 (PSH, ACK)
+    Window: 510
+    [Calculated window size: 65280]
+    [Window size scaling factor: 128]
+    Checksum: 0xe573 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+    TCP payload (25 bytes)
+Data (25 bytes)
+
+0000  57 65 64 20 41 75 67 20 31 33 20 32 31 3a 34 30   Wed Aug 13 21:40
+0010  3a 33 32 20 32 30 32 35 0a                        :32 2025.
+    Data: 576564204175672031332032313a34303a333220323032350a
+    [Length: 25]
+
+No.     Time           Source                Destination           Protocol Length Info
+     20 8.152688500    192.168.0.32          192.168.0.40          TCP      66     42022 → 8888 [ACK] Seq=1 Ack=26 Win=64256 Len=0 TSval=1047712735 TSecr=368447871
+
+Frame 20: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 1, Ack: 26, Len: 0
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 2062825444
+    [Next Sequence Number: 1    (relative sequence number)]
+    Acknowledgment Number: 26    (relative ack number)
+    Acknowledgment number (raw): 1015556101
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x010 (ACK)
+    Window: 502
+    [Calculated window size: 64256]
+    [Window size scaling factor: 128]
+    Checksum: 0xdb22 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+
+No.     Time           Source                Destination           Protocol Length Info
+     21 8.153241493    192.168.0.32          192.168.0.40          TCP      98     42022 → 8888 [PSH, ACK] Seq=1 Ack=26 Win=64256 Len=32 TSval=1047712735 TSecr=368447871
+
+Frame 21: 98 bytes on wire (784 bits), 98 bytes captured (784 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 1, Ack: 26, Len: 32
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 32]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 2062825444
+    [Next Sequence Number: 33    (relative sequence number)]
+    Acknowledgment Number: 26    (relative ack number)
+    Acknowledgment number (raw): 1015556101
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x018 (PSH, ACK)
+    Window: 502
+    [Calculated window size: 64256]
+    [Window size scaling factor: 128]
+    Checksum: 0x23f3 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+    TCP payload (32 bytes)
+Data (32 bytes)
+
+0000  48 65 6c 6c 6f 2c 20 74 68 69 73 20 69 73 20 72   Hello, this is r
+0010  65 70 6c 79 20 66 72 6f 6d 20 63 6c 69 65 6e 74   eply from client
+    Data: 48656c6c6f2c2074686973206973207265706c792066726f6d20636c69656e74
+    [Length: 32]
+
+No.     Time           Source                Destination           Protocol Length Info
+     22 8.153284368    192.168.0.40          192.168.0.32          TCP      66     8888 → 42022 [ACK] Seq=26 Ack=33 Win=65280 Len=0 TSval=368447876 TSecr=1047712735
+
+Frame 22: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74), Dst: 20:c5:7c:26:09:da (20:c5:7c:26:09:da)
+Internet Protocol Version 4, Src: 192.168.0.40, Dst: 192.168.0.32
+Transmission Control Protocol, Src Port: 8888, Dst Port: 42022, Seq: 26, Ack: 33, Len: 0
+    Source Port: 8888
+    Destination Port: 42022
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 26    (relative sequence number)
+    Sequence Number (raw): 1015556101
+    [Next Sequence Number: 26    (relative sequence number)]
+    Acknowledgment Number: 33    (relative ack number)
+    Acknowledgment number (raw): 2062825476
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x010 (ACK)
+    Window: 510
+    [Calculated window size: 65280]
+    [Window size scaling factor: 128]
+    Checksum: 0xdaf5 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+
+No.     Time           Source                Destination           Protocol Length Info
+     23 8.153590031    192.168.0.40          192.168.0.32          TCP      66     8888 → 42022 [FIN, ACK] Seq=26 Ack=33 Win=65280 Len=0 TSval=368447876 TSecr=1047712735
+
+Frame 23: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74), Dst: 20:c5:7c:26:09:da (20:c5:7c:26:09:da)
+Internet Protocol Version 4, Src: 192.168.0.40, Dst: 192.168.0.32
+Transmission Control Protocol, Src Port: 8888, Dst Port: 42022, Seq: 26, Ack: 33, Len: 0
+    Source Port: 8888
+    Destination Port: 42022
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 26    (relative sequence number)
+    Sequence Number (raw): 1015556101
+    [Next Sequence Number: 27    (relative sequence number)]
+    Acknowledgment Number: 33    (relative ack number)
+    Acknowledgment number (raw): 2062825476
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x011 (FIN, ACK)
+    Window: 510
+    [Calculated window size: 65280]
+    [Window size scaling factor: 128]
+    Checksum: 0xdaf4 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+
+No.     Time           Source                Destination           Protocol Length Info
+     24 8.154312189    192.168.0.32          192.168.0.40          TCP      66     42022 → 8888 [FIN, ACK] Seq=33 Ack=26 Win=64256 Len=0 TSval=1047712735 TSecr=368447871
+
+Frame 24: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 33, Ack: 26, Len: 0
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 33    (relative sequence number)
+    Sequence Number (raw): 2062825476
+    [Next Sequence Number: 34    (relative sequence number)]
+    Acknowledgment Number: 26    (relative ack number)
+    Acknowledgment number (raw): 1015556101
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x011 (FIN, ACK)
+    Window: 502
+    [Calculated window size: 64256]
+    [Window size scaling factor: 128]
+    Checksum: 0xdb01 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+
+No.     Time           Source                Destination           Protocol Length Info
+     25 8.154345439    192.168.0.40          192.168.0.32          TCP      66     8888 → 42022 [ACK] Seq=27 Ack=34 Win=65280 Len=0 TSval=368447877 TSecr=1047712735
+
+Frame 25: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74), Dst: 20:c5:7c:26:09:da (20:c5:7c:26:09:da)
+Internet Protocol Version 4, Src: 192.168.0.40, Dst: 192.168.0.32
+Transmission Control Protocol, Src Port: 8888, Dst Port: 42022, Seq: 27, Ack: 34, Len: 0
+    Source Port: 8888
+    Destination Port: 42022
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 27    (relative sequence number)
+    Sequence Number (raw): 1015556102
+    [Next Sequence Number: 27    (relative sequence number)]
+    Acknowledgment Number: 34    (relative ack number)
+    Acknowledgment number (raw): 2062825477
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x010 (ACK)
+    Window: 510
+    [Calculated window size: 65280]
+    [Window size scaling factor: 128]
+    Checksum: 0xdaf2 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
+
+No.     Time           Source                Destination           Protocol Length Info
+     26 8.159480464    192.168.0.32          192.168.0.40          TCP      66     42022 → 8888 [ACK] Seq=34 Ack=27 Win=64256 Len=0 TSval=1047712742 TSecr=368447876
+
+Frame 26: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface wlP2p33s0, id 0
+Ethernet II, Src: 20:c5:7c:26:09:da (20:c5:7c:26:09:da), Dst: 40:9c:a7:2b:5d:74 (40:9c:a7:2b:5d:74)
+Internet Protocol Version 4, Src: 192.168.0.32, Dst: 192.168.0.40
+Transmission Control Protocol, Src Port: 42022, Dst Port: 8888, Seq: 34, Ack: 27, Len: 0
+    Source Port: 42022
+    Destination Port: 8888
+    [Stream index: 1]
+    [Conversation completeness: Complete, WITH_DATA (31)]
+    [TCP Segment Len: 0]
+    Sequence Number: 34    (relative sequence number)
+    Sequence Number (raw): 2062825477
+    [Next Sequence Number: 34    (relative sequence number)]
+    Acknowledgment Number: 27    (relative ack number)
+    Acknowledgment number (raw): 1015556102
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x010 (ACK)
+    Window: 502
+    [Calculated window size: 64256]
+    [Window size scaling factor: 128]
+    Checksum: 0xdaf4 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+    [Timestamps]
+    [SEQ/ACK analysis]
