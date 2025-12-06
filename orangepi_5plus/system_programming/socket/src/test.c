@@ -1,24 +1,37 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
-int main(void)
+int main(int argc, char **argv)
 {
-	char buffer[512];
-	
-	char *test = "Received a signal is SIGCHLD, child process exit and parent process reclaims its' resources\n";
-	memset(buffer, '\0', sizeof(buffer));
+	if(argc < 3){
+		fprintf(stderr, "Usage: [%s] [Hostname/Alias/IP] [Port]\n",argv[0]);
+		return -1;
+	}
 
-	if(read(STDIN_FILENO, buffer, sizeof(buffer)) < 0){
-		perror("read error");
-	}else{
-		buffer[sizeof(buffer) - 1] = '\0';
-		if(write(STDOUT_FILENO, buffer, sizeof(buffer)) != sizeof(buffer))
-		{
-			perror("write error");
+	struct hostent *host = NULL;
+	char ip[16];
+	while((host = gethostent()) != NULL){
+		if(!strcmp(host->h_name, argv[1])){
+			printf("Official name:[%s]\n",host->h_name);
+			memset(ip, '\0', sizeof(ip));
+			inet_ntop(AF_INET, host->h_addr_list[0], ip, sizeof(ip));
+			printf("ip:[%s]\n",ip);
+		}else{
+			char **alias = host->h_aliases;
+			while(*alias != NULL){
+				if(!strcmp(*alias, argv[1])){
+					printf("Alias name:[%s]\n",*alias);
+					memset(ip, '\0', sizeof(ip));
+					inet_ntop(AF_INET, host->h_addr_list[0], ip, sizeof(ip));
+					printf("ip:[%s]\n",ip);
+				}
+				alias++;
+			}
 		}
 	}
-	printf("sizeof(buffer) = %d\n",sizeof(buffer));
-	printf("strlen = %d\n",strlen(test));
+
 	return 0;
 }

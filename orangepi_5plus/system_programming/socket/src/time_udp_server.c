@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 {
 	//从命令行获取参数(主机端口号)
 	if(argc < 2){
-		fprintf(stderr, "Usage: [%s] [Port]\\n",argv[0]);
+		fprintf(stderr, "Usage: [%s] [Port]\n",argv[0]);
 		return -1;
 	}
 
