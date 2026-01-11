@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <fcntl.h>
+#include <poll.h>
 #include "vessel_fd.h"
 
 typedef struct{
@@ -178,14 +179,55 @@ void commun_func(int new_fd)
 	}
 }
 
-void *thread_func(void *arg)
+int add_set(fd_set *set)
 {
+	//清空描述符集
+	FD_ZERO(set);
+
+	//填充描述符集并获取最大值
+	int maxfds = ves->fd[0];
 	int i;
 
-	//遍历整个动态数组，与客户端进行通信
+	for(i = 0; i < ves->counter; i++){
+		if(maxfds < ves->fd[i])	maxfds = ves->fd[i];
+		FD_SET(ves->fd[i], set);
+	}
+
+	return maxfds;
+}
+
+void *thread_func(void *arg)
+{
+	struct pollfd fds[1024];
+	int nfds;
+	int retval;
+
 	while(!exit_flag){
-		for(i = 0; i < ves->counter; i++){
-			commun_func(get_vessel_fd(ves, i));
+		nfds = ves->counter;
+
+		int i;
+		for(i = 0; i < nfds; i++){
+			fds[i].fd = ves->fd[i];
+			fds[i].events = POLLIN;
+		}
+
+		retval = poll(fds, nfds, 2000);
+		if(retval < 0){
+			if(errno == EINTR){
+				continue;
+			}
+			perror("poll");
+			break;
+		}else if(retval == 0){
+			continue;
+		}else{
+			int i;
+
+			for(i = 0; i < nfds; i++){
+				if(fds[i].revents & POLLIN){
+					commun_func(fds[i].fd);
+				}
+			}
 		}
 	}
 

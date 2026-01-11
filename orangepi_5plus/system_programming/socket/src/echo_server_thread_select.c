@@ -8,7 +8,6 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
-#include <sys/select.h>
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <fcntl.h>
@@ -43,17 +42,13 @@ typedef struct{
 socket_config_t server;
 socket_config_t client;
 vessel_fd_t *ves = NULL;
+volatile sig_atomic_t exit_flag = 0;
 
 void signal_handler(int signum)
 {
-	//收到Ctrl+C信号关闭套接字描述符
-	char *sigint_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
+	//收到Ctrl+C信号将退出标志位置为1
 	if(signum == SIGINT){
-		write(STDOUT_FILENO, sigint_msg, strlen(sigint_msg));
-		close(server.sockfd);
-		//销毁创建的动态数组
-		destroy_vessel(ves);
-		exit(EXIT_SUCCESS);
+		exit_flag = 1;
 	}
 }
 
@@ -135,13 +130,11 @@ void out_client_msg(socket_config_t *client)
 	char ip[16];
 
 	memset(ip, '\0', sizeof(ip));
-	
-	//输出连接上来的客户端信息
-	assert(client != NULL);
-	inet_ntop(AF_INET, &client->addr.sin_addr.s_addr, ip, sizeof(ip));
-	port = ntohs(client->addr.sin_port);
 
-	printf("client [%s](%d) connected...\n",ip, port);
+	port = ntohs(client->addr.sin_port);
+	inet_ntop(AF_INET, &client->addr.sin_addr,ip, sizeof(ip));
+	
+	fprintf(stdout, "Receive a connection: IP:[%s] Port:[%d] connected....\n",ip, port);
 }
 
 void commun_func(int new_fd)
@@ -161,100 +154,122 @@ void commun_func(int new_fd)
 		}
 	//size = 0表示客户端关闭,对方可能调用了close或者shutdown	
 	}else if(size == 0){
-		char info[] = "client closed...\n";
-		write(STDOUT_FILENO, info, sizeof(info));
+		fprintf(stderr, "peer closed the connection\n");
 		remove_vessel_fd(ves, new_fd);
 		close(new_fd);
+		return;
 	//size > 0表示正常读取到了数据
 	}else{
 		printf("Server receive TID:[0x%lx] client's message is : %s\n",
 						(unsigned long)pthread_self(), buffer);	
 		//若向已经断开连接的客户端发送消息,则会收到SIGPIPE信号,并将errno设置为EPIPE
-		if(write(new_fd, buffer, size) != size){
+		ssize_t n_write = write(new_fd, buffer, size);
+		if(n_write < 0){
 			if(errno == EPIPE){
-				char info[] = "client closed...\n";
-			write(STDOUT_FILENO, info, sizeof(info));
-			remove_vessel_fd(ves, new_fd);
-			close(new_fd);
+				fprintf(stderr, "peer closed the connection\n");	
+				remove_vessel_fd(ves, new_fd);
+				close(new_fd);
+			}else if(errno != EAGAIN && errno != EWOULDBLOCK){
+				perror("write error");
+				remove_vessel_fd(ves, new_fd);
+				close(new_fd);
 			}
 		}
 	}
 }
 
-int get_readfd(fd_set *readfds)
+int add_set(fd_set *set)
 {
-	int i;
-	int max_fd = -1;
+	//清空描述符集
+	FD_ZERO(set);
 
-	FD_ZERO(readfds);		//清空集合
+	//填充描述符集并获取最大值
+	int maxfds = ves->fd[0];
+	int i;
+
 	for(i = 0; i < ves->counter; i++){
-		if(max_fd < ves->fd[i])	max_fd = ves->fd[i];
-		FD_SET(get_vessel_fd(ves, i), readfds);	
+		if(maxfds < ves->fd[i])	maxfds = ves->fd[i];
+		FD_SET(ves->fd[i], set);
 	}
-	return max_fd;
+
+	return maxfds;
 }
 
 void *thread_func(void *arg)
 {
-	int ret = -1;
-	int max_fd = 0;
-	int i;
-	fd_set readfds;
+	/**
+	 * 1. 子线程调用select函数委托内核去检测传入的描述符集
+	 *		若成功检测则返回已经就绪的描述符数量，超时返回0，失败返回-1
+	 *	2. 子线程调用FD_ISSET去判断哪些描述符集已经准备好，并与对应的客户端进行双向数据通信
+	 */	
 	struct timeval tv;
-	
-	tv.tv_sec = 2;
-	tv.tv_usec = 0;
+	int nfds;
+	fd_set readfds;
+	int retval = -1;
 
-	max_fd = get_readfd(&readfds);
+	while(!exit_flag){
 
-	while((ret = select(max_fd + 1, &readfds, NULL, NULL, &tv)) >= 0){
-		if(ret > 0){
+		nfds = add_set(&readfds);
+		tv.tv_sec = 2;
+		tv.tv_usec = 0;
+
+		retval = select(nfds + 1, &readfds, NULL, NULL, &tv);
+		if(retval < 0){
+			//若errno为EINTR则说明收到了信号，跳出此次循环，否则是其他错误导致select返回值小于0
+			if(errno == EINTR)	continue;
+			perror("select error");
+			break;
+		}else if(retval == 0){
+			//若超时则说明在规定时间内并没有描述符就绪
+			continue;
+		}else{
 			int i;
-
 			for(i = 0; i < ves->counter; i++){
 				if(FD_ISSET(get_vessel_fd(ves, i), &readfds)){
-					commun_func(ves->fd[i]);
+					commun_func(get_vessel_fd(ves, i));
 				}
 			}
 		}
-		tv.tv_sec = 2;
-		tv.tv_usec = 0;
-		max_fd = get_readfd(&readfds);
 	}
-	
+
+
 	pthread_exit(NULL);
 }
 
 void accept_func(socket_config_t server, socket_config_t *client)
 {
-	/*
-	* 主线程使用accept()接受来自客户端的连接
-	* 并将新的套接字描述符放到动态数组中
-	*
-	* 子线程使用select()函数委托内核检查套接字描述符集是否就绪
-	* 若就绪则调用read/write与客户端进行通信
-	* (在调用select后的套接字描述符自动被设置为非阻塞状态)
-	*
-	*/
 	client->addrlen = sizeof(client->addr);
-	
-	while(1){
+
+	while(!exit_flag){
 		int new_fd = accept(server.sockfd, 
 				(struct sockaddr *)&client->addr, 
 				&client->addrlen);
-		if(new_fd < 0){
-			perror("accept error");
+
+		if (new_fd < 0) {
+			if (errno == EINTR) {
+				break;
+			}
+        	perror("accept error");
+        	continue;
+    	}
+
+		//输出连接上来的客户端信息
+		out_client_msg(client);
+		
+		//获取套接字原本的属性
+		int flags = fcntl(new_fd, F_GETFL, 0);
+		if(flags == -1){
+			perror("fcntl F_GETFL failed");
 			continue;
 		}
-		out_client_msg(client);
 
-		/* 将 new_fd 置为非阻塞 */
-        int flags = fcntl(new_fd, F_GETFL, 0);
-        if(flags >= 0){
-            fcntl(new_fd, F_SETFL, flags | O_NONBLOCK);
-        }
-
-		//将设置好的套接字描述符放到动态数组中
+		//设置新的套接字为非阻塞状态
+		if(fcntl(new_fd, F_SETFL, flags | O_NONBLOCK) == -1){
+			perror("fcntl F_SETFL failed");
+			continue;
+		}
+		
+		//将设置好属性的套接字放入动态数组中
 		add_vessel_fd(ves, new_fd);
 	}
 }
@@ -268,8 +283,16 @@ int main(int argc, char **argv)
 	}
 
 	//向内核注册信号处理函数，当接收到对应的信号就转而去执行信号处理函数
-	CHECK_ERROR(signal(SIGINT, signal_handler) == SIG_ERR, 
-			"signal  sigint error");
+	//CHECK_ERROR(signal(SIGINT, signal_handler) == SIG_ERR, 
+	//		"signal  sigint error");
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = signal_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;          // 关键：不要 SA_RESTART
+
+	sigaction(SIGINT, &sa, NULL);
+
 
 	//清空结构体内容
 	memset(&server, '\0', sizeof(server));
@@ -286,6 +309,7 @@ int main(int argc, char **argv)
 			"Failed to get host address", 
 			close(server.sockfd));
 
+
 	//2.绑定协议族、IP地址和端口号
 	CHECK_ERROR_CLEANUP(bind_func(&server, argv[1]) < 0, 
 			"Failed to bind socket", 
@@ -295,30 +319,32 @@ int main(int argc, char **argv)
 	CHECK_ERROR_CLEANUP(listen_func(&server) < 0, 
 			"Failed to listen the request", 
 			close(server.sockfd));
-
-	//创建动态数组用来存放和客户端连接的socket套接字
+	
+	//创建容器
 	ves = create_vessel();
-
-	//初始化线程属性
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-	//设置线程属性为分离线程
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);	
+	if(ves == NULL){
+		perror("calloc error");
+		return -1;
+	}
 	
 	//创建线程与客户端进行通信
 	pthread_t tid;
-	if(pthread_create(&tid, &attr, thread_func, NULL) != 0){
+	if(pthread_create(&tid, NULL, thread_func, NULL) != 0){
 		perror("pthread_create error");
+		return -1;
 	}	
-
-	//销毁线程属性
-	pthread_attr_destroy(&attr);	
 
 	//4.允许客户端连接主机
 	accept_func(server, &client);
 
 	//关闭套接字描述符防止资源泄漏
+	char *sigint_msg = "Received a signal is SIGINT, server closed and clean up resources...\n";
+	write(STDOUT_FILENO, sigint_msg, strlen(sigint_msg));
 	close(server.sockfd);
+
+	//确保进程退出后再销毁ves资源
+	pthread_join(tid, NULL);
+	destroy_vessel(ves);
 
 	return 0;
 }
