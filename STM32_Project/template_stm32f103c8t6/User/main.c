@@ -1,27 +1,20 @@
 #include "stm32f10x.h"                  // Device header
 #include "delay.h"
-
+#include "bsp_led.h"
+#include "bsp_key.h"
 
 int main(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
+	BSP_LED_Init();	
+	BSP_KEY_Init();
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);	//使能GPIOB组的时钟
-
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;		//将某组GPIO配置为推挽输出
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;    	//GPIO速度为50MHz
-
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	
 	while(1)
 	{
-		GPIO_WriteBit(GPIOB, GPIO_Pin_8, Bit_RESET);
-        GPIO_WriteBit(GPIOB, GPIO_Pin_9, Bit_SET);
-		delay_ms(1000);
-		GPIO_WriteBit(GPIOB, GPIO_Pin_9, Bit_RESET);
-        GPIO_WriteBit(GPIOB, GPIO_Pin_8, Bit_SET);
-        delay_ms(1000);
+		if(BSP_KEY_Scan(KEY1) == BSP_KEY_PRESSED){
+			BSP_LED_Toggle(LED_BLUE);
+		}
+		if(BSP_KEY_Scan(KEY2) == BSP_KEY_PRESSED){
+			BSP_LED_Toggle(LED_ORANGE);
+		}
 	}
 }

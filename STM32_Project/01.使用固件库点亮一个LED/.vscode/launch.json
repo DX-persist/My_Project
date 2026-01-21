@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Current STM32 Project",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/stm32f103ve.elf",
+      "servertype": "openocd",
+      "configFiles": ["${workspaceFolder}/openocd/stm32.cfg"],
+      "runToEntryPoint": "main",
+      "device": "STM32F103VE",
+      "svdFile": "${workspaceFolder}/STM32F103.svd",
+      "preLaunchTask": "flashall",
+      "gdbPath": "/usr/bin/arm-none-eabi-gdb"
+    }
+  ]
+}

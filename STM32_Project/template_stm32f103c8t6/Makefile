@@ -26,7 +26,7 @@ CFLAGS += -DUSE_STDPERIPH_DRIVER
 INCLUDES  = -ICMSIS
 INCLUDES += -IUser
 INCLUDES += -ISTM32F10x_StdPeriph_Driver/inc
-INCLUDES += -IDrivers/UserLib
+INCLUDES += -IDrivers/UserLib/inc
 
 # ==================== Linker ====================
 LDSCRIPT = stm32f103c8.ld
@@ -43,7 +43,9 @@ SRCS += User/stm32f10x_it.c
 SRCS += STM32F10x_StdPeriph_Driver/src/misc.c
 SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
 SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
-SRCS += Drivers/UserLib/delay.c
+SRCS += Drivers/UserLib/src/delay.c
+SRCS += Drivers/UserLib/src/bsp_led.c
+SRCS += Drivers/UserLib/src/bsp_key.c
 
 # ==================== Startup ====================
 STARTUP = CMSIS/startup_stm32f10x_md.S
@@ -57,7 +59,7 @@ $(BUILD):
 	mkdir -p $(BUILD)/CMSIS
 	mkdir -p $(BUILD)/User
 	mkdir -p $(BUILD)/STM32F10x_StdPeriph_Driver/src
-	mkdir -p $(BUILD)/Drivers/UserLib
+	mkdir -p $(BUILD)/Drivers/UserLib/src
 
 # ==================== Compile C sources ====================
 $(BUILD)/%.o: %.c | $(BUILD)
