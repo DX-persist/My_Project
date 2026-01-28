@@ -1,0 +1,105 @@
+#ifndef BSP_ESP8266_H
+#define BSP_ESP8266_H
+
+#include "stm32f10x.h"
+#include "bsp_delay.h"
+#include "bsp_usart.h"
+#include <stdio.h>
+#include "bsp_led.h"
+
+#define FLASH_MODE	0
+#define NORMAL_MODE	1
+
+#define SUCCESS 1
+#define FAILURE 0
+#define TIMEOUT 2
+
+/* 定义 ESP8266 相关的 AT 指令 */
+#define BSP_ESP8266_TEST_CMD				"AT"
+#define	BSP_ESP8266_SET_MIXED_MODE_CMD		"AT+CWMODE=3"
+#define BSP_ESP8266_CONNECT_WIFI_CMD		"AT+CWJAP"
+#define BSP_ESP8266_CONNECT_TCP_CMD			"AT+CIPSTART"
+#define BSP_ESP8266_SET_TRAN_MODE_CMD		"AT+CIPMODE=1"
+#define BSP_ESP8266_SEND_MSG_CMD			"AT+CIPSEND"
+#define BSP_ESP8266_REBOOT_CMD				"AT+RST"
+#define BSP_ESP8266_CLOSE_ATE_CMD			"ATE0"
+
+/* 定义 ESP8266 模块连接所需的信息 */
+#define BSP_ESP8266_WIFI_NAME				"Ridiculous2.4g"
+#define BSP_ESP8266_WIFI_PASSWORD			"persist011104"
+#define BSP_ESP8266_SERVER_TYPE				"TCP"
+#define BSP_ESP8266_SERVER_IP_ADDR			"192.168.10.21"
+#define BSP_ESP8266_SERVER_PORT				"8080"
+
+/* 定义ESP8266 模块的最大接收字节数 */
+#define RECV_BUF_MAX    256
+
+/* 判断指令是否执行成功 */
+#define BSP_ESP8266_CMD_RESPONSE_SUCCESS	"OK"
+#define BSP_ESP8266_CMD_RESPONSE_FAIL		"ERROR"
+
+/* WIFI 状态类 */
+#define BSP_ESP8266_WIFI_DISCONNECTED						"WIFI DISCONNECTED"
+#define BSP_ESP8266_WIFI_CONNECTED							"WIFI CONNECTED"
+#define BSP_ESP8266_WIFI_GOT_IP								"WIFI GOT IP"
+#define BSP_ESP8266_WIFI_FAIL_PREFIX						"+CWJAP:"
+
+/* TCP 状态类 */
+#define BSP_ESP8266_TCP_CONNECTED							"CONNECT"
+#define BSP_ESP8266_TCP_CLOSED								"CLOSED"
+
+typedef enum{
+	ESP8266_OK = 0,
+    ESP8266_ERROR,
+    ESP8266_TIMEOUT
+}ESP8266_Status_t;
+
+typedef enum{
+	BSP_ESP8266_EN = 0,
+	BSP_ESP8266_RST,
+	BSP_ESP8266_GPIO0,
+	BSP_ESP8266_GPIO2,
+	BSP_ESP8266_MAX
+}bsp_esp8266_t;
+
+typedef enum{
+	BSP_ESP8266_Flash_Mode = 0,
+	BSP_ESP8266_Normal_Mode = 1,
+}bsp_esp8266_mode_t;
+
+typedef enum{
+	WIFI_DISCONNECTED = 0,
+	WIFI_CONNECTED,
+	WIFI_GOT_IP,
+	WIFI_CONNECT_FAILED,
+	TCP_CONNECTED,
+	TCP_DISCONNECTED	
+}bsp_esp8266_state_t;
+
+extern char test_cmd[8];
+extern char set_mixed_mode_cmd[20];
+extern char connect_wifi_cmd[104];
+extern char connect_server_cmd[56];
+extern char set_tran_mode_cmd[20];
+extern char send_msg_cmd[16];
+extern char reboot_cmd[20];  
+extern char close_ate_cmd[8];
+
+extern uint8_t esp8266_recv_buf[RECV_BUF_MAX];
+extern uint8_t esp8266_recv_buf_len;
+extern uint8_t esp8266_recv_done;
+
+extern void BSP_ESP8266_Init(void);
+extern void BSP_ESP8266_SendString(uint8_t *str);
+extern void BSP_ESP8266_Build_Cmd(void);
+extern void BSP_ESP8266_CommandHandler(void);
+extern uint8_t BSP_ESP8266_SendCmdAnd_WaitFor(char *cmd, const char *expect, const char *errmsg, uint32_t timeout_ms);
+extern uint8_t BSP_ESP8266_ConnectWiFi(char *cmd, const char *wifi_discon, const char *wifi_con, const char *wifi_gotip,
+										const char *wifi_prefix, const char *expect, const char *errmsg, uint32_t timeout_ms);
+uint8_t BSP_ESP8266_ConnectServer(char *cmd, const char *server_con, const char *server_discon, 
+										const char *expect, const char *errmsg, uint32_t timeout_ms);
+
+extern void BSP_ESP8266_Send_Testcmd(void);
+extern void BSP_ESP8266_Send_Closecmd(void);
+
+#endif
