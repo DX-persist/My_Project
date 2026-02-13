@@ -1,0 +1,53 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "stm32f103vet6/15.IIC读写EEPROM"
+		}
+	],
+	"settings": {
+		"C_Cpp.intelliSenseEngine": "default",
+		"C_Cpp.errorSquiggles": "enabled",
+		"makefile.extensionEnabled": false,
+		"cmake.configureOnOpen": false,
+
+        // 【绝杀】强制根目录不建立全局索引
+        // 这样当你打开 P14 的文件时，VS Code 只能依赖 P14 自己的 json 配置
+        // 而不会受到 Root 目录下其他文件符号的干扰
+        "C_Cpp.default.browse.path": [],
+        "C_Cpp.default.limitSymbolsToIncludedHeaders": true,
+
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true,
+			"**/build/**": true,
+			"**/obj/**": true,
+			"**/.vscode-server/**": true
+		},
+		
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true,
+			"**/build": true,         
+			"**/*.o": true,           
+			"**/*.d": true,
+			"**/*.map": true,
+			"**/*.elf": true,
+			"**/*.bin": true
+		},
+
+		"search.exclude": {
+			"**/build": true,
+			"**/*.o": true,
+			"**/*.d": true,
+			"**/.git": true
+		}
+	}
+}

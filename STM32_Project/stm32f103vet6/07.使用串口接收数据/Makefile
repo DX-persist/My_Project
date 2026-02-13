@@ -34,10 +34,8 @@ LDFLAGS  = $(MCU)
 LDFLAGS += -T$(LDSCRIPT)
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,-Map=$(BUILD)/$(TARGET).map
-# 移除 -nostdlib 以允许链接标准库
-# 添加 --specs=nano.specs 以使用适合微控制器的优化版 newlib-nano 库
-# 添加 -lc -lm 显式链接 C 库和数学库
-LDFLAGS += --specs=nano.specs -lc -lm -nostartfiles -lgcc
+LDFLAGS += --specs=nano.specs --specs=nosys.specs
+LDFLAGS += -lc -lm -lnosys
 
 # ==================== Sources ====================
 SRCS += CMSIS/system_stm32f10x.c
@@ -45,12 +43,20 @@ SRCS += User/main.c
 SRCS += User/syscalls.c
 SRCS += User/stm32f10x_it.c
 SRCS += STM32F10x_StdPeriph_Driver/src/misc.c
+SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c
+SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c
 SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
 SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
 SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
-SRCS += Drivers/UserLib/src/bsp_led.c
+
 SRCS += Drivers/UserLib/src/bsp_delay.c
+#SRCS += Drivers/UserLib/src/bsp_exti.c
+SRCS += Drivers/UserLib/src/bsp_key.c
+SRCS += Drivers/UserLib/src/bsp_led.c
+SRCS += Drivers/UserLib/src/bsp_rccclk.c
 SRCS += Drivers/UserLib/src/bsp_usart.c
+
+
 # ==================== Startup ====================
 STARTUP = CMSIS/startup_stm32f10x_hd.S
 
@@ -73,8 +79,23 @@ $(BUILD)/%.o: %.c | $(BUILD)
 $(BUILD)/startup_stm32f10x_hd.o: $(STARTUP) | $(BUILD)
 	$(CC) $(MCU) -x assembler-with-cpp -c $< -o $@
 
-# ==================== Main build target ====================
-all: $(ELF) $(BIN)
+# ==================== Targets (Auto JSON Generation) ====================
+
+# 1. 默认目标 all：自动执行编译+生成json
+#    注意：它依赖 .json_trigger，这会触发 Python 脚本
+#    Python 脚本内部会调用 make firmware 来执行真正的编译
+all: .json_trigger
+
+# 2. 实际编译目标：只负责生成二进制，不负责脚本 (被脚本调用)
+firmware: $(ELF) $(BIN)
+
+# 3. 烧录全家桶：执行 all (编译+json)，然后烧录
+flashall: all
+	@$(MAKE) flash
+
+# 4. 触发器：调用 Python 脚本
+.json_trigger:
+	@python3 gen_cc.py
 
 # ==================== Link ELF ====================
 $(ELF): $(OBJS)
@@ -88,6 +109,7 @@ $(BIN): $(ELF)
 # ==================== Clean ====================
 clean:
 	rm -rf $(BUILD)
+	rm -f compile_commands.json
 
 # ==================== Disassembly ====================
 disasm:
@@ -100,9 +122,8 @@ probe:
 	@echo "=== 探测 ST-Link 设备 ==="
 	st-info --probe
 
-flash: $(BIN)
+flash:
 	@echo "=== 烧写固件到 STM32 ==="
 	st-flash --connect-under-reset write $(BIN) $(FLASH_ADDR)
 
-flashall: all flash
-	@echo "=== 编译 + 烧写 完成 ==="
+.PHONY: all firmware clean probe flash flashall disasm .json_trigger

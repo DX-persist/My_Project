@@ -268,7 +268,7 @@ void BSP_USART_SendArray(bsp_usart_t id, uint8_t *array, uint8_t size)
 	}
 }
 
-uint8_t BSP_USART_ReadByte(bsp_usart_t id)
+int BSP_USART_ReadByte(bsp_usart_t id)
 {
 	if(id >= BSP_USART_MAX)	return -1;
 
@@ -307,7 +307,6 @@ int _write(int fd, char *ptr, int len)
 	
 	for(int i = 0; i < len; i++){
 		BSP_USART_SendByte(g_usart_id, *(ptr+i));
-		return i + 1;				/* 留一个字节存放结束标志 */
 	}
 	return len;
 }
@@ -358,7 +357,7 @@ void BSP_USART_ClearRxBuffer(bsp_usart_t id)
 
 	//memset(rb->buffer, '\0', sizeof(rb->buffer));
 	/* 直接将头和为指向一起就可以清空缓冲区 */
-	rb->head = rb->head;	
+	rb->tail = rb->head;	
 }
 
 void BSP_USART_Set_ITRXNE_State(bsp_usart_t id, FunctionalState NewState)

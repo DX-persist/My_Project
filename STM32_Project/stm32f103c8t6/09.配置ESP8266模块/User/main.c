@@ -8,10 +8,9 @@
 
 int main()
 {
-	uint8_t step = 0;
 	/* 初始化串口1并将printf重定向到串口1用作调试串口 */
-	BSP_USART_Config(BSP_USART1);
-	BSP_USART_Stdio(BSP_USART1);
+	BSP_USART_Config(ESP8266_DEBUG_USART_ID);
+	BSP_USART_Stdio(ESP8266_DEBUG_USART_ID);
 
 	/* 初始化系统时基：1ms */
 	BSP_TimeBase_Init();
@@ -21,49 +20,22 @@ int main()
 	BSP_ESP8266_Init();
 
 	BSP_LED_Init();
-	//BSP_Delay_ms(5000);
-	// if(BSP_ESP8266_Test()){
-	// 	printf("AT指令测试成功\r\n");
-	// }
-	// printf("hahahah\r\n");
-#if 0	
-	while(1){
-		switch(step){
-			case 0:		/* 测试 ESP8266 模块是否正常工作 */
-				if(BSP_ESP8266_Test()){
-					printf("%s|%s|%d AT指令测试成功\r\n",__FILE__, __func__,__LINE__);
-					step++;
-				}
-				break;
-			case 1:		/* 关闭模块的回显功能 */
-				if(BSP_ESP8266_CloseEcho()){
-					printf("%s|%s|%d 回显功能关闭成功\r\n",__FILE__, __func__,__LINE__);
-					step++;
-				}
-				break;
-			case 2:		/* 连接WiFi */
-				 if(BSP_ESP8266_ConnectWiFI()){
-                    printf("%s|%s|%d WiFi连接成功\r\n",__FILE__, __func__,__LINE__);
-                    step++;
-                }
-				break;
-			case 3:		/* 连接服务器 */
-				if(BSP_ESP8266_ConnectTCP()){
-                    printf("%s|%s|%d 服务器连接成功\r\n",__FILE__, __func__,__LINE__);
-                    step++;
-                }
-				break;
-			case 4:		/* 设置透传模式 */
-				if(BSP_ESP8266_SetTransMode()){
-                    printf("%s|%s|%d 透传模式开启成功\r\n",__FILE__, __func__,__LINE__);
-                    step++;
-                }
-				break;
-			case 5:
-				printf("模块初始化成功\r\n");
-				break;
-		}
+
+	if(BSP_ESP8266_Test()){
+		printf("%s|%s|%d AT指令测试成功\r\n",__FILE__, __func__,__LINE__);
 	}
-#endif
+	if(BSP_ESP8266_CloseEcho()){
+		printf("%s|%s|%d 回显功能关闭成功\r\n",__FILE__, __func__,__LINE__);
+	}
+	if(BSP_ESP8266_ConnectWiFi()){
+		printf("%s|%s|%d WiFi连接成功\r\n",__FILE__, __func__,__LINE__);
+	}
+	if(BSP_ESP8266_ConnectTCP()){
+		printf("%s|%s|%d 服务器连接成功\r\n",__FILE__, __func__,__LINE__);
+	}
+	if(BSP_ESP8266_SetTransMode()){
+		printf("%s|%s|%d 透传模式开启成功\r\n",__FILE__, __func__,__LINE__);
+	}
+	//printf("%s|%s|%d 模块初始化成功\r\n", __FILE__, __func__,__LINE__);
 }
 

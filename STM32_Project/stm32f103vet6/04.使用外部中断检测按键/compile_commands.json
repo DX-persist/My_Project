@@ -1,0 +1,67 @@
+[
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c CMSIS/system_stm32f10x.c -o build/CMSIS/system_stm32f10x.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/CMSIS/system_stm32f10x.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c User/main.c -o build/User/main.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/User/main.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c User/syscalls.c -o build/User/syscalls.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/User/syscalls.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c User/stm32f10x_it.c -o build/User/stm32f10x_it.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/User/stm32f10x_it.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c STM32F10x_StdPeriph_Driver/src/misc.c -o build/STM32F10x_StdPeriph_Driver/src/misc.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/STM32F10x_StdPeriph_Driver/src/misc.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c -o build/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c -o build/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c -o build/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c -o build/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c Drivers/UserLib/src/bsp_exti.c -o build/Drivers/UserLib/src/bsp_exti.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/Drivers/UserLib/src/bsp_exti.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c Drivers/UserLib/src/bsp_key.c -o build/Drivers/UserLib/src/bsp_key.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/Drivers/UserLib/src/bsp_key.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c Drivers/UserLib/src/bsp_led.c -o build/Drivers/UserLib/src/bsp_led.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/Drivers/UserLib/src/bsp_led.c"
+    },
+    {
+        "directory": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e",
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -x assembler-with-cpp -c CMSIS/startup_stm32f10x_hd.S -o build/startup_stm32f10x_hd.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/04.\u4f7f\u7528\u5916\u90e8\u4e2d\u65ad\u68c0\u6d4b\u6309\u952e/CMSIS/startup_stm32f10x_hd.S"
+    }
+]

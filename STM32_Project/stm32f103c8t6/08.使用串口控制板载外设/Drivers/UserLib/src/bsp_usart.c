@@ -268,7 +268,7 @@ void BSP_USART_SendArray(bsp_usart_t id, uint8_t *array, uint8_t size)
 	}
 }
 
-uint8_t BSP_USART_ReadByte(bsp_usart_t id)
+int BSP_USART_ReadByte(bsp_usart_t id)
 {
 	if(id >= BSP_USART_MAX)	return 0;
 

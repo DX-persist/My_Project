@@ -10,21 +10,21 @@ typedef struct{
 
 static const bsp_esp8266_hw_t bsp_esp8266_hw[BSP_ESP8266_MAX] = {
 
-	[BSP_ESP8266_EN] = {						/* EN 引脚用来决定 ESP8266 模块是否使能(0: 不使能 1: 使能)*/
-		.gpio_port 	= GPIOB,					/* 配置 ESP8266 模块 EN 引脚所在的端口 */
-		.gpio_pin 	= GPIO_Pin_12,				/* 配置 ESP8266 模块 EN 引脚 */
-		.rcc_clk 	= RCC_APB2Periph_GPIOB,		/* 配置 ESP8266 模块 EN 引脚所在的端口的时钟 */
-	},
-
 	[BSP_ESP8266_RST] = {						/* RST 引脚用来决定 ESP8266 模块是否复位(0: 复位 1: 不复位)*/
 		.gpio_port 	= GPIOB,					/* 配置 ESP8266 模块 RST 引脚所在的端口 */
-		.gpio_pin 	= GPIO_Pin_13,				/* 配置 ESP8266 模块 RST 引脚 */
+		.gpio_pin 	= GPIO_Pin_12,				/* 配置 ESP8266 模块 RST 引脚 */
 		.rcc_clk 	= RCC_APB2Periph_GPIOB,		/* 配置 ESP8266 模块 RST 引脚所在的端口的时钟 */
+	},
+#if 0
+	[BSP_ESP8266_EN] = {						/* EN 引脚用来决定 ESP8266 模块是否使能(0: 不使能 1: 使能)*/
+		.gpio_port 	= GPIOB,					/* 配置 ESP8266 模块 EN 引脚所在的端口 */
+		.gpio_pin 	= GPIO_Pin_14,				/* 配置 ESP8266 模块 EN 引脚 */
+		.rcc_clk 	= RCC_APB2Periph_GPIOB,		/* 配置 ESP8266 模块 EN 引脚所在的端口的时钟 */
 	},
 	
 	[BSP_ESP8266_GPIO0] = {						/* GPIO0 引脚用来决定 ESP8266 模块的启动方式(0: 进入Flash下载模式,用于烧录固件 1: 进入正常运行模式) */
 		.gpio_port 	= GPIOB,					/* 配置 ESP8266 模块 GPIO0 引脚所在的端口 */
-		.gpio_pin 	= GPIO_Pin_14,				/* 配置 ESP8266 模块 GPIO0 引脚 */
+		.gpio_pin 	= GPIO_Pin_13,				/* 配置 ESP8266 模块 GPIO0 引脚 */
 		.rcc_clk 	= RCC_APB2Periph_GPIOB,		/* 配置 ESP8266 模块 GPIO0 引脚所在的端口的时钟 */
 	},
 
@@ -33,6 +33,7 @@ static const bsp_esp8266_hw_t bsp_esp8266_hw[BSP_ESP8266_MAX] = {
 		.gpio_pin 	= GPIO_Pin_15,				/* 配置 ESP8266 模块 GPIO2 引脚 */
 		.rcc_clk 	= RCC_APB2Periph_GPIOB,		/* 配置 ESP8266 模块 GPIO2 引脚所在的端口的时钟 */
 	}
+#endif
 };
 
 static void BSP_ESP8266_GPIO_Init(void)
@@ -103,19 +104,18 @@ static void BSP_ESP8266_HardReset(void)
 	/* 给 ESP8266 模块上电时间以及连接WIFI的时间
 	 * (若这里已经连接过WIFI,它上电后会自动连接)
 	 * */
-	BSP_Delay_ms(5000);
-
-	/* 将缓冲区里边的垃圾数据(上电时接收到的数据)清理干净 */
-	BSP_ESP8266_ClearRxBuffer();
 }
 
 static void BSP_ESP8266_GPIO_Config(void)
 {
 	BSP_ESP8266_GPIO_Init();										/* 配置 GPIO 的端口、引脚、模式、速度、启用 RCC 时钟 */
-	BSP_ESP8266_ENABLE();											/* 使能 ESP8266 模块 */
-	BSP_ESP8266_Mode_Select(BSP_ESP8266_Normal_Mode);				/* 配置 ESP8266 模块正常启动 */
-	BSP_ESP8266_GPIO2_ENABLE();										/* 启动配置引脚 */
+	//BSP_ESP8266_ENABLE();											/* 使能 ESP8266 模块 */
+	//BSP_ESP8266_Mode_Select(BSP_ESP8266_Normal_Mode);				/* 配置 ESP8266 模块正常启动 */
+	//BSP_ESP8266_GPIO2_ENABLE();										/* 启动配置引脚 */
 	BSP_ESP8266_HardReset();										/* 复位一下 ESP8266 模块 */
+	BSP_Delay_ms(5000);
+	/* 将缓冲区里边的垃圾数据(上电时接收到的数据)清理干净 */
+	BSP_ESP8266_ClearRxBuffer();
 }
 
 static void BSP_ESP8266_USART_Config(void)
@@ -142,6 +142,11 @@ void BSP_ESP8266_SendCmd(char *cmd)
 	BSP_USART_SendString(ESP8266_USART_ID, "\r\n");
 }
 
+void BSP_ESP8266_SendData(char *msg)
+{
+	BSP_USART_SendString(ESP8266_USART_ID, msg);
+	BSP_USART_SendString(ESP8266_USART_ID, "\r\n");
+}
 
 static ESP8266_Status_t BSP_ESP8266_WaitForResponse(const char *success_msg, const char *fail_msg, uint32_t timeout_ms)
 {
@@ -159,8 +164,8 @@ static ESP8266_Status_t BSP_ESP8266_WaitForResponse(const char *success_msg, con
 	while((BSP_GetTick() - start) < timeout_ms){
 		data = BSP_USART_ReadByte(ESP8266_USART_ID);
 		if(data >= 0 && resp_len < sizeof(resp_buffer) - 1){
-			 /* 【调试大法】把收到的每一个字节都转发给串口1，看看是什么 */
-        	BSP_USART_SendByte(BSP_USART1, (uint8_t)data); 
+			 /* 出错调试用 */
+        	//BSP_USART_SendByte(BSP_USART1, (uint8_t)data); 
 			resp_buffer[resp_len++] = data;
 			resp_buffer[resp_len] = '\0';
 
@@ -180,9 +185,16 @@ bool BSP_ESP8266_Test(void)
 {
 	/* 发送AT测试指令检测模块是否准备好了 */
 	/* 清空环形缓冲区 */
+	ESP8266_Status_t result;
+
+	printf("准备发送AT指令\r\n");
 	BSP_ESP8266_ClearRxBuffer();
 	BSP_ESP8266_SendCmd(ESP8266_TEST_CMD);
-	if(BSP_ESP8266_WaitForResponse(ESP8266_CMD_RESPONSE_SUCCESS, ESP8266_CMD_RESPONSE_FAIL, 2000) == ESP8266_OK){
+	printf("AT指令已发送,等待响应......\r\n");
+	
+	result = BSP_ESP8266_WaitForResponse(ESP8266_CMD_RESPONSE_SUCCESS, ESP8266_CMD_RESPONSE_FAIL, 2000);
+	printf("reslut = %d (0=OK, 1=ERROR, 2=TIMEOUT)\r\n",result);
+	if(result == ESP8266_OK){
 		return true;
 	}else{
 		return false;
@@ -201,7 +213,7 @@ bool BSP_ESP8266_CloseEcho(void)
 	}
 }
 
-bool BSP_ESP8266_ConnectWiFI(void)
+bool BSP_ESP8266_ConnectWiFi(void)
 {
 	char cmd[100];
 

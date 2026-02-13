@@ -300,7 +300,7 @@ void BSP_USART_Stdio(bsp_usart_t id)
 
 int _write(int fd, char *ptr, int len)
 {
-	(void)fd;			/* 防止编译器报 unsed 警告 */
+	(void)fd;			/* 防止编译器报 unused 警告 */
 	
 	for(int i = 0; i < len; i++){
 		BSP_USART_SendByte(g_usart_id, *(ptr+i));

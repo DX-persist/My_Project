@@ -44,7 +44,7 @@ extern void BSP_USART_SendArray(bsp_usart_t id, uint8_t *array, uint8_t size);
 extern void BSP_USART_CommandHandler(bsp_usart_t id);
 extern void BSP_USART_Set_ITRXNE_State(bsp_usart_t id, FunctionalState NewState);
 extern void BSP_USART_Stdio(bsp_usart_t id);
-extern uint8_t BSP_USART_ReadByte(bsp_usart_t id);
+extern int BSP_USART_ReadByte(bsp_usart_t id);
 extern void BSP_USART_Clear_RingBuffer(bsp_usart_t id);
 extern uint8_t BSP_USART_GetRxCount(bsp_usart_t id);
 extern void BSP_RecvCommand_Analysis(char *cmd_buf);

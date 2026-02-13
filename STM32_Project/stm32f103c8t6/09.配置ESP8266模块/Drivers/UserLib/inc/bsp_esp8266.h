@@ -70,13 +70,13 @@ typedef enum{
 
 extern void BSP_ESP8266_Init(void);
 
-extern void BSP_ESP8266_SendString(uint8_t *str);
 extern void BSP_ESP8266_SendCmd(char *cmd);
+extern void BSP_ESP8266_SendData(char *msg);
 extern void BSP_ESP8266_ClearRxBuffer(void);
 
 extern bool BSP_ESP8266_Test(void);
 extern bool BSP_ESP8266_CloseEcho(void);
-extern bool BSP_ESP8266_ConnectWiFI(void);
+extern bool BSP_ESP8266_ConnectWiFi(void);
 extern bool BSP_ESP8266_ConnectTCP(void);
 extern bool BSP_ESP8266_SetTransMode(void);
 extern bool BSP_ESP8266_Reboot(void);
