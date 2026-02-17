@@ -9,6 +9,7 @@
 #include "bsp_si2c.h"
 #include "bsp_usart.h"
 #include "bsp_led.h"
+#include <math.h>
 
 /* EEPROM使用的I2C接口编号 (对应bsp_si2c.h中的定义) */
 #define BSP_EEPROM_I2C_ID           BSP_SI2C1

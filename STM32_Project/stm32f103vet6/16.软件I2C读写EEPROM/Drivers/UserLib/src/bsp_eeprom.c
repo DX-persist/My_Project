@@ -244,6 +244,109 @@ void BSP_EEPROM_Test(void)
         }
     }
 
+    /* ========== 测试3: EEPROM 写入一个整数并读取 ========== */
+    int int_data = 525;
+    int recv_data = 0;
+    uint8_t data_addr = 20;
+
+    printf("%s|%s|%d EEPROM 写入一个整数并读取 ......\r\n", __FILE__, __func__, __LINE__);
+    BSP_EEPROM_WritePage(data_addr, (uint8_t *)&int_data, sizeof(int_data));
+    printf("%s|%s|%d 写入整数 data = %d\r\n",__FILE__, __func__, __LINE__, int_data);
+
+    BSP_EEPROM_ReadSequential(data_addr, &recv_data, sizeof(recv_data));
+    printf("%s|%s|%d 读取整数 data = %d\r\n",__FILE__, __func__, __LINE__, recv_data);
+
+    /* 比较写入和读取的数据 */
+    if(int_data == recv_data){
+        printf("%s|%s|%d 写入一个整数 + 读取一个整数测试成功\r\n", __FILE__, __func__, __LINE__);
+        // 成功: 绿灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_GREEN);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_GREEN);
+            BSP_Delay_ms(500);
+        }
+    }else{
+        printf("%s|%s|%d 写入一个整数 + 读取一个整数测试失败\r\n", __FILE__, __func__, __LINE__);
+        // 失败: 红灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_RED);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_RED);
+            BSP_Delay_ms(500);
+        }
+    }
+
+    /* ========== 测试4: EEPROM 写入一个小数并读取 ========== */
+    double double_data = 3.14;
+    double double_recv = 0.0;
+    uint8_t double_addr = 30;
+
+    printf("%s|%s|%d EEPROM 写入一个小数并读取 ......\r\n", __FILE__, __func__, __LINE__);
+    BSP_EEPROM_WritePage(double_addr, (uint8_t *)&double_data, sizeof(double_data));
+    printf("%s|%s|%d 写入小数 data = %f\r\n",__FILE__, __func__, __LINE__, double_data);
+
+    BSP_EEPROM_ReadSequential(double_addr, &double_recv, sizeof(double_recv));
+    printf("%s|%s|%d 读取小数 data = %f\r\n",__FILE__, __func__, __LINE__, double_recv);
+
+    /**
+     * 由于存入和读取存在精度问题，所以不能使用 == 去判定两个小数
+     * 是否相等，应该使用 fabs 函数求两数的绝对值然后作差比较是否
+     * 小于用户所定义的最小误差
+     * */ 
+    if(fabs(double_data - double_recv) < 1e-9){
+        printf("%s|%s|%d 写入一个小数 + 读取一个小数测试成功\r\n", __FILE__, __func__, __LINE__);
+        // 成功: 绿灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_GREEN);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_GREEN);
+            BSP_Delay_ms(500);
+        }
+    }else{
+        printf("%s|%s|%d 写入一个小数 + 读取一个小数测试失败\r\n", __FILE__, __func__, __LINE__);
+        // 失败: 红灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_RED);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_RED);
+            BSP_Delay_ms(500);
+        }
+    }
+
+    /* ========== 测试4: EEPROM 写入一个字符串并读取 ========== */
+    char *write_msg = "这是一个EEPROM测试程序";
+    char recv_msg[36] = {'\0'};
+    uint8_t char_addr = 40;
+
+    printf("%s|%s|%d EEPROM 写入一个字符串并读取 ......\r\n", __FILE__, __func__, __LINE__);
+    BSP_EEPROM_WritePage(char_addr, (uint8_t *)write_msg, strlen(write_msg));
+    printf("%s|%s|%d 写入字符串 msg:[%s]\r\n",__FILE__, __func__, __LINE__, write_msg);
+
+    BSP_EEPROM_ReadSequential(char_addr, recv_msg, strlen(write_msg));
+    printf("%s|%s|%d 读取字符串 msg:[%s]\r\n",__FILE__, __func__, __LINE__, recv_msg);
+
+    /* 比较两个字符串是否相同 */ 
+    if(!strncmp(write_msg, recv_msg, strlen(write_msg))){
+        printf("%s|%s|%d 写入一个字符串 + 读取一个字符串测试成功\r\n", __FILE__, __func__, __LINE__);
+        // 成功: 绿灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_GREEN);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_GREEN);
+            BSP_Delay_ms(500);
+        }
+    }else{
+        printf("%s|%s|%d 写入一个字符串 + 读取一个字符串测试失败\r\n", __FILE__, __func__, __LINE__);
+        // 失败: 红灯闪烁3次
+        for(int i = 0; i < 3; i++){
+            BSP_LED_On(LED_RED);
+            BSP_Delay_ms(500);
+            BSP_LED_Off(LED_RED);
+            BSP_Delay_ms(500);
+        }
+    }
+
     printf("%s|%s|%d EEPROM 测试完成\r\n",__FILE__, __func__, __LINE__);
 }
 

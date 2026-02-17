@@ -35,6 +35,8 @@ LDFLAGS += -T$(LDSCRIPT)
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,-Map=$(BUILD)/$(TARGET).map
 LDFLAGS += --specs=nano.specs --specs=nosys.specs
+#用于printf函数打印浮点型数据
+LDFLAGS += -u _printf_float
 LDFLAGS += -lc -lm -lnosys
 
 # ==================== Sources ====================
