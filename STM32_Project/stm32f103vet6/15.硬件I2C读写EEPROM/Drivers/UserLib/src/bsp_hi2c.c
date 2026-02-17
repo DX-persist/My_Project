@@ -130,7 +130,7 @@ static void BSP_HI2C_Unlock(GPIO_InitTypeDef *GPIO_InitStruct, const bsp_i2c_hw_
 	BSP_Delay_us(5);								// 延时5微秒
 	GPIO_SetBits(hw->scl_port, hw->scl_pin);		// SCL拉高
 	BSP_Delay_us(5);								// 延时5微秒
-	GPIO_SetBits(hw->scl_port, hw->scl_pin);		// SDA拉高,产生停止信号
+	GPIO_SetBits(hw->scl_port, hw->sda_pin);		// SDA拉高,产生停止信号
 }
 
 /**
@@ -150,14 +150,14 @@ void BSP_HI2C_Init(bsp_hi2c_t i2c_id)
 	GPIO_StructInit(&GPIO_InitStruct);				// 初始化GPIO结构体为默认值
 	I2C_StructInit(&I2C_InitStruct);				// 初始化I2C结构体为默认值
 
+	/* 开启 IIC 引脚所在的 GPIO 端口时钟 */
+	RCC_APB2PeriphClockCmd(hw->scl_clk | hw->sda_clk, ENABLE);	// 使能GPIO端口时钟
+
 	/* 解除总线死锁问题 */
 	BSP_HI2C_Unlock(&GPIO_InitStruct, hw);
 
 	/* 开启 I2Cx 的时钟 */
 	RCC_APB1PeriphClockCmd(hw->i2c_clk, ENABLE);	// 使能I2C外设时钟
-
-	/* 开启 IIC 引脚所在的 GPIO 端口时钟 */
-	RCC_APB2PeriphClockCmd(hw->scl_clk | hw->sda_clk, ENABLE);	// 使能GPIO端口时钟
 
 	/* 配置 IIC 的 scl 引脚的模式、速度 */
 	GPIO_InitStruct.GPIO_Pin 	= hw->scl_pin;		// SCL引脚

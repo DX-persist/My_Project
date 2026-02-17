@@ -61,6 +61,7 @@ SRCS += Drivers/UserLib/src/bsp_key.c
 SRCS += Drivers/UserLib/src/bsp_led.c
 SRCS += Drivers/UserLib/src/bsp_rccclk.c
 SRCS += Drivers/UserLib/src/bsp_ringbuffer.c
+SRCS += Drivers/UserLib/src/bsp_si2c.c
 SRCS += Drivers/UserLib/src/bsp_usart.c
 
 # ==================== Startup ====================
