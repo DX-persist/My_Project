@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "stm32f103vet6/16.软件I2C读写EEPROM"
+			"path": "stm32f103vet6/17.SPI读写Flash"
 		}
 	],
 	"settings": {

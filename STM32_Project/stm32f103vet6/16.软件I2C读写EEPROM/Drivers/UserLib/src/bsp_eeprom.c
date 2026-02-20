@@ -253,7 +253,7 @@ void BSP_EEPROM_Test(void)
     BSP_EEPROM_WritePage(data_addr, (uint8_t *)&int_data, sizeof(int_data));
     printf("%s|%s|%d 写入整数 data = %d\r\n",__FILE__, __func__, __LINE__, int_data);
 
-    BSP_EEPROM_ReadSequential(data_addr, &recv_data, sizeof(recv_data));
+    BSP_EEPROM_ReadSequential(data_addr, (uint8_t *)&recv_data, sizeof(recv_data));
     printf("%s|%s|%d 读取整数 data = %d\r\n",__FILE__, __func__, __LINE__, recv_data);
 
     /* 比较写入和读取的数据 */
@@ -286,7 +286,7 @@ void BSP_EEPROM_Test(void)
     BSP_EEPROM_WritePage(double_addr, (uint8_t *)&double_data, sizeof(double_data));
     printf("%s|%s|%d 写入小数 data = %f\r\n",__FILE__, __func__, __LINE__, double_data);
 
-    BSP_EEPROM_ReadSequential(double_addr, &double_recv, sizeof(double_recv));
+    BSP_EEPROM_ReadSequential(double_addr, (uint8_t *)&double_recv, sizeof(double_recv));
     printf("%s|%s|%d 读取小数 data = %f\r\n",__FILE__, __func__, __LINE__, double_recv);
 
     /**
@@ -323,7 +323,7 @@ void BSP_EEPROM_Test(void)
     BSP_EEPROM_WritePage(char_addr, (uint8_t *)write_msg, strlen(write_msg));
     printf("%s|%s|%d 写入字符串 msg:[%s]\r\n",__FILE__, __func__, __LINE__, write_msg);
 
-    BSP_EEPROM_ReadSequential(char_addr, recv_msg, strlen(write_msg));
+    BSP_EEPROM_ReadSequential(char_addr, (uint8_t *)recv_msg, strlen(write_msg));
     printf("%s|%s|%d 读取字符串 msg:[%s]\r\n",__FILE__, __func__, __LINE__, recv_msg);
 
     /* 比较两个字符串是否相同 */ 
