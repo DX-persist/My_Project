@@ -55,7 +55,8 @@ SRCS += STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
 
 SRCS += Drivers/UserLib/src/bsp_dma.c
 SRCS += Drivers/UserLib/src/bsp_delay.c
-SRCS += Drivers/UserLib/src/bsp_eeprom.c
+#SRCS += Drivers/UserLib/src/bsp_eeprom_hi2c.c
+SRCS += Drivers/UserLib/src/bsp_eeprom_si2c.c
 SRCS += Drivers/UserLib/src/bsp_esp8266.c
 SRCS += Drivers/UserLib/src/bsp_exti.c
 SRCS += Drivers/UserLib/src/bsp_hi2c.c

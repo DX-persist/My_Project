@@ -1,7 +1,7 @@
 #include "bsp_led.h"
 #include "bsp_delay.h"
 #include "bsp_usart.h"
-#include "bsp_eeprom.h"
+#include "bsp_eeprom_si2c.h"
 
 #include <stdio.h>
 

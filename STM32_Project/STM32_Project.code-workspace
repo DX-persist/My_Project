@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "stm32f103vet6/17.SPI读写Flash"
+			"path": "stm32f103vet6/18.串行Flash文件系统FatFs"
 		}
 	],
 	"settings": {
