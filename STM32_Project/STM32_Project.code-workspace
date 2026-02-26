@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "stm32f103vet6/18.串行Flash文件系统FatFs"
+			"path": "stm32f103vet6/19.FSMC控制LCD液晶屏幕"
 		}
 	],
 	"settings": {
