@@ -14,9 +14,8 @@ int main(void)
 	BSP_USART_Stdio(BSP_USART1);
 	
 	printf("FSMC 控制LCD液晶屏\r\n");
-	BSP_LCD_Init();
-	printf("test = 0x%02x\r\n", BSP_LCD_Test());
-
+	BSP_LCD_Test_Demo();
+	
 	while(1){
 	
 	}
