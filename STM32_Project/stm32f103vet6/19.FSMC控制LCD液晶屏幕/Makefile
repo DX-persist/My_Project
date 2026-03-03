@@ -1,3 +1,6 @@
+# 开启多核编译，极大加快编译速度
+MAKEFLAGS += -j8 
+
 # ==================== Toolchain ====================
 CC      = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
@@ -21,6 +24,8 @@ CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -std=gnu11
 CFLAGS += -DSTM32F10X_HD
 CFLAGS += -DUSE_STDPERIPH_DRIVER
+# 生成依赖文件以支持秒级增量编译
+CFLAGS += -MMD -MP 
 
 # ==================== Include paths ====================
 INCLUDES  = -ICMSIS
@@ -95,30 +100,17 @@ $(BUILD):
 	mkdir -p $(BUILD)/Drivers/UserLib/src
 	mkdir -p $(BUILD)/FatFs/src
 
-# ==================== Compile C sources ====================
-$(BUILD)/%.o: %.c | $(BUILD)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+# ==================== Targets ====================
+all: firmware
 
-# ==================== Compile Startup .S file ====================
-$(BUILD)/startup_stm32f10x_hd.o: $(STARTUP) | $(BUILD)
-	$(CC) $(MCU) -x assembler-with-cpp -c $< -o $@
-
-# ==================== Targets (Auto JSON Generation) ====================
-
-# 1. 默认目标 all：自动执行编译+生成json
-#    注意：它依赖 .json_trigger，这会触发 Python 脚本
-#    Python 脚本内部会调用 make firmware 来执行真正的编译
-all: .json_trigger
-
-# 2. 实际编译目标：只负责生成二进制，不负责脚本 (被脚本调用)
 firmware: $(ELF) $(BIN)
 
-# 3. 烧录全家桶：执行 all (编译+json)，然后烧录
-flashall: all
+flashall: firmware
 	@$(MAKE) flash
 
-# 4. 触发器：调用 Python 脚本
-.json_trigger:
+# 单独剥离出的 json 生成指令
+json:
+	@echo "Generating compile_commands.json..."
 	@python3 gen_cc.py
 
 # ==================== Link ELF ====================
@@ -129,6 +121,14 @@ $(ELF): $(OBJS)
 # ==================== Generate BIN ====================
 $(BIN): $(ELF)
 	$(OBJCOPY) -O binary $< $@
+
+# ==================== Compile C sources ====================
+$(BUILD)/%.o: %.c | $(BUILD)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# ==================== Compile Startup .S file ====================
+$(BUILD)/startup_stm32f10x_hd.o: $(STARTUP) | $(BUILD)
+	$(CC) $(MCU) -x assembler-with-cpp -c $< -o $@
 
 # ==================== Clean ====================
 clean:
@@ -150,4 +150,7 @@ flash:
 	@echo "=== 烧写固件到 STM32 ==="
 	st-flash --connect-under-reset write $(BIN) $(FLASH_ADDR)
 
-.PHONY: all firmware clean probe flash flashall disasm .json_trigger
+.PHONY: all firmware clean probe flash flashall disasm json
+
+# 导入 GCC 自动生成的依赖 (.d) 文件，放在文件最末尾
+-include $(OBJS:.o=.d)

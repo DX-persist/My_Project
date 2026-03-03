@@ -20,6 +20,8 @@
 #define GREEN   RGB888_TO_RGB565(0,   255, 0)    // 绿色
 #define BLUE    RGB888_TO_RGB565(0,   0,   255)  // 蓝色
 #define YELLOW  RGB888_TO_RGB565(255, 255, 0)    // 黄色
+#define PURPLE  RGB888_TO_RGB565(163, 73,  164)  // 紫色
+#define CYAN    RGB888_TO_RGB565(0,   255, 255)  // 青色
 
 #define LCD_WIDTH      240
 #define LCD_HEIGHT     320
@@ -32,8 +34,9 @@ extern void BSP_LCD_Init(void);
 extern void BSP_LCD_DrawPixel(uint16_t x, uint16_t y, uint16_t color);
 extern void BSP_LCD_Clear(uint16_t color);
 extern void BSP_LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color);
-extern void BSP_LCD_DrawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
-extern void BSP_LCD_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color);
+extern void BSP_LCD_DrawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color, uint8_t filled);
+extern void BSP_LCD_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color, uint8_t filled);
 extern void BSP_LCD_Test_Demo(void);
+extern void BSP_LCD_MyTest(void);
 
 #endif

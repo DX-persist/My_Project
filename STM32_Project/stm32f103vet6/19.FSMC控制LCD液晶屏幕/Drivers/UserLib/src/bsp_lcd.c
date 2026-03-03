@@ -180,32 +180,52 @@ void BSP_LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16
     }
 }
 /**
- * @brief  画矩形框
+ * @brief  画矩形 / 实心矩形
  */
-void BSP_LCD_DrawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color)
+void BSP_LCD_DrawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color, uint8_t filled)
 {
-    BSP_LCD_DrawLine(x, y, x + width - 1, y, color);                           /* 上边 */
-    BSP_LCD_DrawLine(x, y + height - 1, x + width - 1, y + height - 1, color); /* 下边 */
-    BSP_LCD_DrawLine(x, y, x, y + height - 1, color);                          /* 左边 */
-    BSP_LCD_DrawLine(x + width - 1, y, x + width - 1, y + height - 1, color);  /* 右边 */
+    if (filled) {
+        /* 如果是实心，借用设置窗口的方式极速填充 */
+        BSP_LCD_SetWindow(x, y, x + width - 1, y + height - 1);
+        BSP_LCD_WriteCmd(LCD_SET_MEM_CMD);
+        uint32_t total_points = (uint32_t)width * height;
+        for (uint32_t i = 0; i < total_points; i++) {
+            BSP_LCD_WriteData(color);
+        }
+    } else {
+        /* 仅绘制边框 */
+        BSP_LCD_DrawLine(x, y, x + width - 1, y, color);                           /* 上边 */
+        BSP_LCD_DrawLine(x, y + height - 1, x + width - 1, y + height - 1, color); /* 下边 */
+        BSP_LCD_DrawLine(x, y, x, y + height - 1, color);                          /* 左边 */
+        BSP_LCD_DrawLine(x + width - 1, y, x + width - 1, y + height - 1, color);  /* 右边 */
+    }
 }
 /**
- * @brief  画圆函数 (基于 Bresenham 算法)
+ * @brief  画圆 / 实心圆 (基于 Bresenham 算法)
  */
-void BSP_LCD_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color)
+void BSP_LCD_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color, uint8_t filled)
 {
     int a = 0, b = r;
     int di = 3 - (r << 1); /* 判断下个点位置的标志 */
     
     while (a <= b) {
-        BSP_LCD_DrawPixel(x0 + a, y0 - b, color); /* 5 区 */
-        BSP_LCD_DrawPixel(x0 + b, y0 - a, color); /* 0 区 */
-        BSP_LCD_DrawPixel(x0 + b, y0 + a, color); /* 7 区 */
-        BSP_LCD_DrawPixel(x0 + a, y0 + b, color); /* 6 区 */
-        BSP_LCD_DrawPixel(x0 - a, y0 + b, color); /* 1 区 */
-        BSP_LCD_DrawPixel(x0 - b, y0 + a, color); /* 2 区 */
-        BSP_LCD_DrawPixel(x0 - a, y0 - b, color); /* 4 区 */
-        BSP_LCD_DrawPixel(x0 - b, y0 - a, color); /* 3 区 */
+        if (filled) {
+            /* 填充圆：通过画水平线连接左右对称点进行逐行填充 */
+            BSP_LCD_DrawLine(x0 - a, y0 - b, x0 + a, y0 - b, color);
+            BSP_LCD_DrawLine(x0 - a, y0 + b, x0 + a, y0 + b, color);
+            BSP_LCD_DrawLine(x0 - b, y0 - a, x0 + b, y0 - a, color);
+            BSP_LCD_DrawLine(x0 - b, y0 + a, x0 + b, y0 + a, color);
+        } else {
+            /* 仅绘制圆弧轮廓 */
+            BSP_LCD_DrawPixel(x0 + a, y0 - b, color); /* 5 区 */
+            BSP_LCD_DrawPixel(x0 + b, y0 - a, color); /* 0 区 */
+            BSP_LCD_DrawPixel(x0 + b, y0 + a, color); /* 7 区 */
+            BSP_LCD_DrawPixel(x0 + a, y0 + b, color); /* 6 区 */
+            BSP_LCD_DrawPixel(x0 - a, y0 + b, color); /* 1 区 */
+            BSP_LCD_DrawPixel(x0 - b, y0 + a, color); /* 2 区 */
+            BSP_LCD_DrawPixel(x0 - a, y0 - b, color); /* 4 区 */
+            BSP_LCD_DrawPixel(x0 - b, y0 - a, color); /* 3 区 */
+        }
         
         a++;
         if (di < 0) {
@@ -236,7 +256,7 @@ static void BSP_LCD_ResetConfig(void)
 	hw->lcd_reset.gpio_port->BSRR = (((uint32_t)hw->lcd_reset.gpio_pin) << 16);
 	BSP_Delay_ms(5);
 	hw->lcd_reset.gpio_port->BSRR = ((uint32_t)hw->lcd_reset.gpio_pin);
-	BSP_Delay_ms(10);
+	BSP_Delay_ms(120);
 }
 
 static void BSP_LCD_Private_Pins_Init(void)
@@ -516,14 +536,20 @@ void BSP_LCD_Test_Demo(void)
     BSP_LCD_DrawLine(20, 120, 100, 120, BLUE);
     
     /* 
-     * 5. 测试画矩形边框: BSP_LCD_DrawRect(左上角x, 左上角y, 宽度, 高度, 颜色)
-     * 在坐标 (120, 20) 处画一个宽 60、高 80 的黄色矩形框
+     * 5. 测试画矩形边框: BSP_LCD_DrawRect(左上角x, 左上角y, 宽度, 高度, 颜色, 填充标志)
+     * 在坐标 (120, 20) 处画一个宽 60、高 80 的黄色矩形框，0代表不填充
      */
-    BSP_LCD_DrawRect(120, 20, 60, 80, YELLOW);
+    BSP_LCD_DrawRect(105, 20, 60, 80, YELLOW, 0);
+
+    /* 在坐标 (200, 20) 处测试一个填充的紫色矩形 */
+    BSP_LCD_DrawRect(170, 20, 60, 80, PURPLE, 1);
     
     /* 
-     * 6. 测试画圆: BSP_LCD_DrawCircle(圆心x, 圆心y, 半径, 颜色)
-     * 在坐标 (120, 180) 处，画一个半径为 40 的红色圆形
+     * 6. 测试画圆: BSP_LCD_DrawCircle(圆心x, 圆心y, 半径, 颜色, 填充标志)
+     * 在坐标 (120, 180) 处，画一个半径为 40 的红色圆形，0代表不填充
      */
-    BSP_LCD_DrawCircle(120, 180, 40, RED);
+    BSP_LCD_DrawCircle(100, 180, 40, RED, 0);
+
+    /* 在坐标 (200, 180) 处，测试一个半径为 40 的实心蓝色圆形 */
+    BSP_LCD_DrawCircle(190, 180, 40, BLUE, 1);
 }
