@@ -1,5 +1,5 @@
 /**
- * @file    bsp_spi.h
+ * @file    bsp_hspi.h
  * @brief   硬件 SPI 总线底层驱动头文件
  * @version V1.0
  */

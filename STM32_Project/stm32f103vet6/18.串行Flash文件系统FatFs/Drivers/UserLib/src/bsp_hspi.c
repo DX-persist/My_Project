@@ -1,5 +1,5 @@
 /**
- * @file    bsp_spi.c
+ * @file    bsp_hspi.c
  * @author  Antigravity
  * @brief   硬件 SPI 外设底层驱动实现文件
  * @version V1.0
@@ -7,10 +7,10 @@
  *          通过维护一个统一的硬件配置参数表 (bsp_spi_hw_t)，提高了代码的可移植性和解耦度。
  */
 
-#include "bsp_spi.h"
+#include "bsp_hspi.h"
 
 /**
- * @brief SPI 硬件底层配置信息结构体
+ * @brief 硬件 SPI 底层配置信息结构体
  * @note  包含 SPI 外设的所有相关参数、引脚配置及所在总线信息，便于进行多通道统一管理。
  */
 typedef struct{
@@ -42,22 +42,21 @@ typedef struct{
 	BSP_BusTypeDef bus;     /*!< SPI 外设所挂载的系统总线枚举 (APB1 或 APB2) */
 }bsp_spi_hw_t;
 
-/** @brief SPI 硬件引脚配置及外设参数常量表 */
-static const bsp_spi_hw_t bsp_spi_hw[BSP_SPI_MAX] = {
-	[BSP_SPI1] = {
+/** @brief 硬件 SPI 引脚配置及外设参数常量表 */
+static const bsp_spi_hw_t bsp_hspi_hw[BSP_HSPI_MAX] = {
+	[BSP_HSPI1] = {
+		.spi 		= SPI1,
+		.spi_clk 	= RCC_APB2Periph_SPI1,
 
-		.spi = SPI1,
-		.spi_clk = RCC_APB2Periph_SPI1,
-
-		.direction 	= SPI_Direction_2Lines_FullDuplex,	/* 配置为两线全双工的模式 */
-		.mode 		= SPI_Mode_Master,					/* 配置为主机模式 */
-		.datasize 	= SPI_DataSize_8b,					/* 每次传输8位数据 */
-		.cpol 		= SPI_CPOL_High,					/* 空闲时SCK为高电平 */
-		.cpha 		= SPI_CPHA_2Edge,					/* 在第二边沿采集数据 */
-		.nss 		= SPI_NSS_Soft,						/* 启用软件从设备管理 */
-		.baud_pre 	= SPI_BaudRatePrescaler_2,			/* 配置波特率为APB总线的二分频 */
-		.first_bit 	= SPI_FirstBit_MSB,					/* 高位先行 */
-		.crc_pol = 0,									/* 不使用 CRC 校验 */
+		.direction 	= SPI_Direction_2Lines_FullDuplex,
+		.mode 		= SPI_Mode_Master,
+		.datasize 	= SPI_DataSize_8b,
+		.cpol 		= SPI_CPOL_High,
+		.cpha 		= SPI_CPHA_2Edge,
+		.nss 		= SPI_NSS_Soft,
+		.baud_pre 	= SPI_BaudRatePrescaler_2,
+		.first_bit 	= SPI_FirstBit_MSB,
+		.crc_pol 	= 0,
 		
 		.sck_port	= GPIOA,
 		.sck_pin	= GPIO_Pin_5,
@@ -72,23 +71,21 @@ static const bsp_spi_hw_t bsp_spi_hw[BSP_SPI_MAX] = {
 		.miso_clk	= RCC_APB2Periph_GPIOA,
 
 		.bus		= BSP_BUS_APB2,
-
 	},
 
-	[BSP_SPI2] = {
+	[BSP_HSPI2] = {
+		.spi 		= SPI2,
+		.spi_clk 	= RCC_APB1Periph_SPI2,
 
-		.spi = SPI2,
-		.spi_clk = RCC_APB1Periph_SPI2,
-
-		.direction 	= SPI_Direction_2Lines_FullDuplex,	/* 配置为两线全双工的模式 */
-		.mode 		= SPI_Mode_Master,					/* 配置为主机模式 */
-		.datasize 	= SPI_DataSize_8b,					/* 每次传输8位数据 */
-		.cpol 		= SPI_CPOL_High,					/* 空闲时SCK为高电平 */
-		.cpha 		= SPI_CPHA_2Edge,					/* 在第二边沿采集数据 */
-		.nss 		= SPI_NSS_Soft,						/* 启用软件从设备管理 */
-		.baud_pre 	= SPI_BaudRatePrescaler_2,			/* 配置波特率为APB总线的二分频 */
-		.first_bit 	= SPI_FirstBit_MSB,					/* 高位先行 */
-		.crc_pol = 0,									/* 不使用 CRC 校验 */
+		.direction 	= SPI_Direction_2Lines_FullDuplex,
+		.mode 		= SPI_Mode_Master,
+		.datasize 	= SPI_DataSize_8b,
+		.cpol 		= SPI_CPOL_High,
+		.cpha 		= SPI_CPHA_2Edge,
+		.nss 		= SPI_NSS_Soft,
+		.baud_pre 	= SPI_BaudRatePrescaler_2,
+		.first_bit 	= SPI_FirstBit_MSB,
+		.crc_pol 	= 0,
 		
 		.sck_port	= GPIOB,
 		.sck_pin	= GPIO_Pin_13,
@@ -103,23 +100,21 @@ static const bsp_spi_hw_t bsp_spi_hw[BSP_SPI_MAX] = {
 		.miso_clk	= RCC_APB2Periph_GPIOB,
 
 		.bus		= BSP_BUS_APB1,
-		
 	},
 
-	[BSP_SPI3] = {
-		
-		.spi = SPI3,
-		.spi_clk = RCC_APB1Periph_SPI3,
+	[BSP_HSPI3] = {
+		.spi 		= SPI3,
+		.spi_clk 	= RCC_APB1Periph_SPI3,
 
-		.direction 	= SPI_Direction_2Lines_FullDuplex,	/* 配置为两线全双工的模式 */
-		.mode 		= SPI_Mode_Master,					/* 配置为主机模式 */
-		.datasize 	= SPI_DataSize_8b,					/* 每次传输8为数据 */
-		.cpol 		= SPI_CPOL_High,					/* 空闲时SCK为高电平 */
-		.cpha 		= SPI_CPHA_2Edge,					/* 在第二边沿采集数据 */
-		.nss 		= SPI_NSS_Soft,						/* 启用软件从设备管理 */
-		.baud_pre 	= SPI_BaudRatePrescaler_2,			/* 配置波特率为APB总线的二分频 */
-		.first_bit 	= SPI_FirstBit_MSB,					/* 高位先行 */
-		.crc_pol = 0,									/* 不使用 CRC 校验 */
+		.direction 	= SPI_Direction_2Lines_FullDuplex,
+		.mode 		= SPI_Mode_Master,
+		.datasize 	= SPI_DataSize_8b,
+		.cpol 		= SPI_CPOL_High,
+		.cpha 		= SPI_CPHA_2Edge,
+		.nss 		= SPI_NSS_Soft,
+		.baud_pre 	= SPI_BaudRatePrescaler_2,
+		.first_bit 	= SPI_FirstBit_MSB,
+		.crc_pol 	= 0,
 		
 		.sck_port	= GPIOB,
 		.sck_pin	= GPIO_Pin_3,
@@ -138,17 +133,17 @@ static const bsp_spi_hw_t bsp_spi_hw[BSP_SPI_MAX] = {
 };
 
 /**
- * @brief  初始化指定的 SPI 硬件外设及其对应的 GPIO 引脚
- * @param  spi_id   SPI 通道号 (BSP_SPI1 / BSP_SPI2 / BSP_SPI3)
+ * @brief  初始化指定的硬件 SPI 外设及其对应的 GPIO 引脚
+ * @param  hspi_id   SPI 通道号 (BSP_HSPI1 / BSP_HSPI2 / BSP_HSPI3)
  * @retval 无
  * @note   包含对应 GPIO 引脚的复用功能配置 (SCK, MOSI 配置为复用推挽输出，MISO 配置为浮空输入)。
  *         注意：在使用 SPI3 时会由于引脚复用冲突而自动禁用 JTAG 功能（保留 SWD 下载和调试）。
  */
-void BSP_SPI_Init(bsp_spi_t spi_id)
+void BSP_HSPI_Init(bsp_hspi_t hspi_id)
 {
-	if(spi_id >= BSP_SPI_MAX)	return;
+	if(hspi_id >= BSP_HSPI_MAX)	return;
 
-	const bsp_spi_hw_t *hw = &bsp_spi_hw[spi_id];
+	const bsp_spi_hw_t *hw = &bsp_hspi_hw[hspi_id];
 	GPIO_InitTypeDef GPIO_InitStruct;
 	SPI_InitTypeDef SPI_InitStruct;
 
@@ -164,7 +159,7 @@ void BSP_SPI_Init(bsp_spi_t spi_id)
 
 	/* 由于 SPI3 的NSS SCK MISO 引脚和JTAG 接口冲突，
 	 * 所以这里禁用JTAG接口，但stlink并不影响下载 */
-	if(spi_id == BSP_SPI3){
+	if(hspi_id == BSP_HSPI3){
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 	}
@@ -205,27 +200,24 @@ void BSP_SPI_Init(bsp_spi_t spi_id)
 }
 
 /**
- * @brief  通过 SPI 总线发送并接收一个字节数据（同步双工传输）
- * @param  spi_id     SPI 通道号
+ * @brief  通过硬件 SPI 总线发送并接收一个字节数据（同步双工传输）
+ * @param  hspi_id    SPI 通道号
  * @param  write_byte 要发送给目标从机的单字节数据
  * @param  read_byte  用于接收从机返回响应的数据指针 (可传入 NULL 忽略接收)
- * @retval 错误码，返回 SPI_ERROR_OK (0) 表示收发成功，其他值代表超时异常（如 TXE/RXNE 等待失败）
- * @note   发送前会等待 TXE (发送缓冲区空) 标志；发送后会等待 RXNE (接收缓冲区非空) 标志。
- *         即使上层模块调用时传入的 read_byte 为 NULL 不需要返回数据，底层驱动也需要强制读取
- *         DR 数据寄存器。这主要有两个好处：一是能及时清空 RXNE 标志位；二是防止 OVR 溢出标志被意外触发。
+ * @retval 错误码，返回 HSPI_OK (0) 表示收发成功，其他值代表超时异常（如 TXE/RXNE 等待失败）
  */
-spi_error_t BSP_SPI_ReadWriteByte(bsp_spi_t spi_id, uint8_t write_byte, uint8_t *read_byte)
+hspi_status_t BSP_HSPI_ReadWriteByte(bsp_hspi_t hspi_id, uint8_t write_byte, uint8_t *read_byte)
 {
-	if(spi_id >= BSP_SPI_MAX)	return SPI_ERROR_PARA;
+	if(hspi_id >= BSP_HSPI_MAX)	return HSPI_ERROR_PARA;
 
-	uint16_t timeout = BSP_SPI_TIMEOUT_MAX;
-	const bsp_spi_hw_t *hw = &bsp_spi_hw[spi_id];
+	uint16_t timeout = BSP_HSPI_TIMEOUT_MAX;
+	const bsp_spi_hw_t *hw = &bsp_hspi_hw[hspi_id];
 
 	/* 判断发送数据寄存器是否为空 */
-	timeout = BSP_SPI_TIMEOUT_MAX;
+	timeout = BSP_HSPI_TIMEOUT_MAX;
 	while(SPI_I2S_GetFlagStatus(hw->spi, SPI_I2S_FLAG_TXE) == RESET){
 		if((timeout--) == 0){
-			return SPI_ERROR_TXE;
+			return HSPI_ERROR_TXE;
 		}
 	}
 
@@ -244,10 +236,10 @@ spi_error_t BSP_SPI_ReadWriteByte(bsp_spi_t spi_id, uint8_t write_byte, uint8_t 
 	 * 产生移除，此时 OVR 标志位会被置为1，所以当检测到 RXNE 标
 	 * 志位置为1的时候需要将其数据读取出来
 	 * */
-	timeout = BSP_SPI_TIMEOUT_MAX;
+	timeout = BSP_HSPI_TIMEOUT_MAX;
 	while(SPI_I2S_GetFlagStatus(hw->spi, SPI_I2S_FLAG_RXNE) == RESET){
 		if((timeout--) == 0){
-			return SPI_ERROR_RXNE;
+			return HSPI_ERROR_RXNE;
 		}
 	}
 	/* 这里使用临时变量来存放数据，然后将数据赋值给read_byte防止上层
@@ -259,26 +251,25 @@ spi_error_t BSP_SPI_ReadWriteByte(bsp_spi_t spi_id, uint8_t write_byte, uint8_t 
 		*read_byte = temp;
 	}
 
-	return SPI_ERROR_OK;
+	return HSPI_OK;
 }
 
 /**
- * @brief  轮询等待指定的 SPI 外设总线所有当前传输任务完成并进入空闲状态
- * @param  spi_id   SPI 通道号
- * @retval 错误码，返回 SPI_ERROR_OK 表示总线已空闲，返回 SPI_ERROR_BUSY 表示等待硬件空闲超时
- * @note   通常在需要改变片选（CS）电平或者禁用 SPI 时使用，防止传输尚未彻底完成。
+ * @brief  轮询等待指定的硬件 SPI 外设总线所有当前传输任务完成并进入空闲状态
+ * @param  hspi_id   SPI 通道号
+ * @retval 错误码，返回 HSPI_OK 表示总线已空闲，返回 HSPI_ERROR_BUSY 表示等待硬件空闲超时
  */
-spi_error_t BSP_SPI_WaitIdle(bsp_spi_t spi_id)
+hspi_status_t BSP_HSPI_WaitIdle(bsp_hspi_t hspi_id)
 {
-	if(spi_id >= BSP_SPI_MAX)	return SPI_ERROR_PARA;
+	if(hspi_id >= BSP_HSPI_MAX)	return HSPI_ERROR_PARA;
 
-	const bsp_spi_hw_t *hw = &bsp_spi_hw[spi_id];
-	uint16_t timeout = BSP_SPI_TIMEOUT_MAX;
+	const bsp_spi_hw_t *hw = &bsp_hspi_hw[hspi_id];
+	uint16_t timeout = BSP_HSPI_TIMEOUT_MAX;
 
 	while(SPI_I2S_GetFlagStatus(hw->spi, SPI_I2S_FLAG_BSY) == SET){
 		if((timeout--) == 0){
-			return SPI_ERROR_BUSY;
+			return HSPI_ERROR_BUSY;
 		}
 	}
-	return SPI_ERROR_OK;
+	return HSPI_OK;
 }

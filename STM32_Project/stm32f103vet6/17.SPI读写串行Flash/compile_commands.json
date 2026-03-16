@@ -121,8 +121,8 @@
     },
     {
         "directory": "/home/orangepi/STM32_Project/stm32f103vet6/17.SPI\u8bfb\u5199\u4e32\u884cFlash",
-        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c Drivers/UserLib/src/bsp_spi.c -o build/Drivers/UserLib/src/bsp_spi.o",
-        "file": "/home/orangepi/STM32_Project/stm32f103vet6/17.SPI\u8bfb\u5199\u4e32\u884cFlash/Drivers/UserLib/src/bsp_spi.c"
+        "command": "arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -O0 -g -ffunction-sections -fdata-sections -std=gnu11 -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER -ICMSIS -IUser -ISTM32F10x_StdPeriph_Driver/inc -IDrivers/UserLib/inc -c Drivers/UserLib/src/bsp_hspi.c -o build/Drivers/UserLib/src/bsp_spi.o",
+        "file": "/home/orangepi/STM32_Project/stm32f103vet6/17.SPI\u8bfb\u5199\u4e32\u884cFlash/Drivers/UserLib/src/bsp_hspi.c"
     },
     {
         "directory": "/home/orangepi/STM32_Project/stm32f103vet6/17.SPI\u8bfb\u5199\u4e32\u884cFlash",

@@ -63,12 +63,12 @@ SRCS += Drivers/UserLib/src/bsp_esp8266.c
 SRCS += Drivers/UserLib/src/bsp_exti.c
 SRCS += Drivers/UserLib/src/bsp_fatfs.c
 SRCS += Drivers/UserLib/src/bsp_hi2c.c
+SRCS += Drivers/UserLib/src/bsp_hspi.c
 SRCS += Drivers/UserLib/src/bsp_key.c
 SRCS += Drivers/UserLib/src/bsp_led.c
 SRCS += Drivers/UserLib/src/bsp_rccclk.c
 SRCS += Drivers/UserLib/src/bsp_ringbuffer.c
 SRCS += Drivers/UserLib/src/bsp_si2c.c
-SRCS += Drivers/UserLib/src/bsp_spi.c
 SRCS += Drivers/UserLib/src/bsp_usart.c
 SRCS += Drivers/UserLib/src/bsp_w25q64.c
 

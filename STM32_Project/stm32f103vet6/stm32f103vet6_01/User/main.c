@@ -46,6 +46,7 @@ void LED_RED_OFF(void)
 	//配置PB5为高电平，熄灭LED_RED
 	GPIOB_ODR |= (1 << 5);
 }	
+
 int main(void)
 {
 	//使能GPIOB的时钟,GPIOB挂在到APB2总线上
@@ -84,3 +85,4 @@ int main(void)
 
 	return 0;
 }
+

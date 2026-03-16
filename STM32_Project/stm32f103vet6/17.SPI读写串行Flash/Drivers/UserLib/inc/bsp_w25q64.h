@@ -1,7 +1,7 @@
 #ifndef BSP_W25Q64_H
 #define BSP_W25Q64_H
 
-#include "bsp_spi.h"
+#include "bsp_hspi.h"
 #include "bsp_usart.h"
 #include "bsp_delay.h"
 #include "stm32f10x.h"

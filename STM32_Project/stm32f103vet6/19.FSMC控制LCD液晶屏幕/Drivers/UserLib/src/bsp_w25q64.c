@@ -9,7 +9,7 @@
 void BSP_W25Q64_Init(void)
 {
 	/* 初始化W25Q64 所用到的SPI外设 */
-	BSP_SPI_Init(BSP_W25Q64_SPI_ID);
+	BSP_HSPI_Init(BSP_W25Q64_SPI_ID);
 	
 	/* 开启 CS 片选引脚的时钟 */
 	RCC_APB2PeriphClockCmd(W25Q64_CS_CLK, ENABLE);	
@@ -35,7 +35,7 @@ void BSP_W25Q64_Init(void)
  */
 static uint8_t BSP_W25Q64_ReadWriteByte(uint8_t write_byte, uint8_t *read_byte)
 {
-	return (BSP_SPI_ReadWriteByte(BSP_W25Q64_SPI_ID, write_byte, read_byte));
+	return (BSP_HSPI_ReadWriteByte(BSP_W25Q64_SPI_ID, write_byte, read_byte));
 }
 
 /**

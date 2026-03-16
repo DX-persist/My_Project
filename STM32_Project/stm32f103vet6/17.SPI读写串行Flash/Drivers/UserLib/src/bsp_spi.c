@@ -1,5 +1,5 @@
 /**
- * @file    bsp_spi.c
+ * @file    bsp_hspi.c
  * @author  Antigravity
  * @brief   硬件 SPI 外设底层驱动实现文件
  * @version V1.0
@@ -7,7 +7,7 @@
  *          通过维护一个统一的硬件配置参数表 (bsp_spi_hw_t)，提高了代码的可移植性和解耦度。
  */
 
-#include "bsp_spi.h"
+#include "bsp_hspi.h"
 
 /**
  * @brief SPI 硬件底层配置信息结构体

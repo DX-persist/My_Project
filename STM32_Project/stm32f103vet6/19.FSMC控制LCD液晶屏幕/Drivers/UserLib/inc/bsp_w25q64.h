@@ -1,7 +1,7 @@
 #ifndef BSP_W25Q64_H
 #define BSP_W25Q64_H
 
-#include "bsp_spi.h"
+#include "bsp_hspi.h"
 #include "bsp_usart.h"
 #include "bsp_delay.h"
 #include "stm32f10x.h"
@@ -19,7 +19,7 @@
 #endif
 
 /** @brief W25Q64 使用的 SPI 总线编号 */
-#define BSP_W25Q64_SPI_ID           BSP_SPI1
+#define BSP_W25Q64_SPI_ID           BSP_HSPI1
 
 /** @brief W25Q64 片选引脚时钟 */
 #define W25Q64_CS_CLK               RCC_APB2Periph_GPIOC
