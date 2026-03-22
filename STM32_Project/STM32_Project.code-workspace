@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "stm32f103vet6/20.xpt2046电阻触摸屏"
+			"path": "stm32f103vet6/21.ADC电压采集/04.双ADC多通道DMA读取/"
 		}
 	],
 	"settings": {

@@ -1,0 +1,13 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    // 关闭回退机制，强迫它必须精准解析（发现错误早暴露）
+    "C_Cpp.intelliSenseEngineFallback": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
+    "makefile.extensionEnabled": false,
+    "cmake.configureOnOpen": false,
+
+    // 1. 明确告诉它 compile_commands.json 的位置
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/compile_commands.json",
+    // 2. 告诉它你用的交叉编译器，这样它能自动找到标准库头文件（比如 <stdint.h>）
+    "C_Cpp.default.compilerPath": "arm-none-eabi-gcc"
+}
