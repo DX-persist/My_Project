@@ -1,0 +1,18 @@
+#ifndef BSP_TIM_COMMON_H
+#define BSP_TIM_COMMON_H
+
+typedef enum{
+	BSP_TIM_COUNTER_MODE_UP = 0,	
+    BSP_TIM_COUNTER_MODE_DOWN,
+    BSP_TIM_COUNTER_MODE_CENTER_ALIGNED1,
+    BSP_TIM_COUNTER_MODE_CENTER_ALIGNED2,
+    BSP_TIM_COUNTER_MODE_CENTER_ALIGNED3
+}bsp_tim_counter_mode_t;
+
+typedef enum{
+	BSP_TIM_CLOCK_DIV_1 = 0,
+    BSP_TIM_CLOCK_DIV_2,
+    BSP_TIM_CLOCK_DIV_4
+}bsp_tim_clock_div_t;
+
+#endif

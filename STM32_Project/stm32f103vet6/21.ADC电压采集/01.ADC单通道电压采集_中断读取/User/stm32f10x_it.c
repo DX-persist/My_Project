@@ -204,12 +204,31 @@ void UART5_IRQHandler(void)
 	BSP_USART_IRQHandler(BSP_UART5);	
 }
 
+/**
+  * @brief  ADC1 和 ADC2 共用中断服务函数
+  * @param  None
+  * @retval None
+  * @details
+  * STM32F10x 中 ADC1 与 ADC2 共用 `ADC1_2_IRQHandler` 中断入口。
+  * 因此在该中断函数中需要分别调用：
+  * - `BSP_ADC_IRQHandler(ADC1)`
+  * - `BSP_ADC_IRQHandler(ADC2)`
+  *
+  * 由底层统一判断当前是否真的发生了 EOC 中断。
+  */
 void ADC1_2_IRQHandler(void)
 {
   BSP_ADC_IRQHandler(ADC1);
   BSP_ADC_IRQHandler(ADC2);
 }
 
+/**
+  * @brief  ADC3 中断服务函数
+  * @param  None
+  * @retval None
+  * @details
+  * ADC3 具有独立的中断入口，因此直接调用 ADC3 的通用处理函数。
+  */
 void ADC3_IRQHandler(void)
 {
   BSP_ADC_IRQHandler(ADC3);

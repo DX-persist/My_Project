@@ -1,0 +1,143 @@
+.
+├── build
+│   ├── CMSIS
+│   │   └── system_stm32f10x.o
+│   ├── Drivers
+│   │   └── UserLib
+│   │       └── src
+│   │           ├── bsp_delay.o
+│   │           ├── bsp_dma.o
+│   │           ├── bsp_eeprom.o
+│   │           ├── bsp_esp8266.o
+│   │           ├── bsp_exti.o
+│   │           ├── bsp_hi2c.o
+│   │           ├── bsp_key.o
+│   │           ├── bsp_led.o
+│   │           ├── bsp_rccclk.o
+│   │           ├── bsp_ringbuffer.o
+│   │           └── bsp_usart.o
+│   ├── startup_stm32f10x_hd.o
+│   ├── stm32f103ve.bin
+│   ├── stm32f103ve.elf
+│   ├── stm32f103ve.map
+│   ├── STM32F10x_StdPeriph_Driver
+│   │   └── src
+│   │       ├── misc.o
+│   │       ├── stm32f10x_dma.o
+│   │       ├── stm32f10x_exti.o
+│   │       ├── stm32f10x_flash.o
+│   │       ├── stm32f10x_gpio.o
+│   │       ├── stm32f10x_i2c.o
+│   │       ├── stm32f10x_rcc.o
+│   │       └── stm32f10x_usart.o
+│   └── User
+│       ├── main.o
+│       ├── stm32f10x_it.o
+│       └── syscalls.o
+├── CMSIS
+│   ├── core_cm3.c
+│   ├── core_cm3.h
+│   ├── startup_stm32f10x_hd.S
+│   ├── stm32f10x.h
+│   ├── system_stm32f10x.c
+│   └── system_stm32f10x.h
+├── compile_commands.json
+├── Drivers
+│   └── UserLib
+│       ├── inc
+│       │   ├── bak2.h
+│       │   ├── bsp_delay.h
+│       │   ├── bsp_dma.h
+│       │   ├── bsp_eeprom_bak.h
+│       │   ├── bsp_eeprom.h
+│       │   ├── bsp_esp8266.h
+│       │   ├── bsp_exti.h
+│       │   ├── bsp_hi2c.h
+│       │   ├── bsp_key.h
+│       │   ├── bsp_led.h
+│       │   ├── bsp_rccclk.h
+│       │   ├── bsp_ringbuffer.h
+│       │   ├── bsp_si2c.h
+│       │   ├── bsp_usart.h
+│       │   └── delay.h
+│       └── src
+│           ├── bak2.c
+│           ├── bsp_delay.c
+│           ├── bsp_dma.c
+│           ├── bsp_eeprom_bak.c
+│           ├── bsp_eeprom.c
+│           ├── bsp_esp8266.c
+│           ├── bsp_exti.c
+│           ├── bsp_hi2c.c
+│           ├── bsp_key.c
+│           ├── bsp_led.c
+│           ├── bsp_rccclk.c
+│           ├── bsp_ringbuffer.c
+│           ├── bsp_si2c.c
+│           ├── bsp_usart.c
+│           └── delay.c
+├── gen_cc.py
+├── Makefile
+├── openocd
+│   └── stm32.cfg
+├── probe.sh
+├── README.md
+├── stm32f103ve.ld
+├── STM32F10x_StdPeriph_Driver
+│   ├── inc
+│   │   ├── misc.h
+│   │   ├── stm32f10x_adc.h
+│   │   ├── stm32f10x_bkp.h
+│   │   ├── stm32f10x_can.h
+│   │   ├── stm32f10x_cec.h
+│   │   ├── stm32f10x_crc.h
+│   │   ├── stm32f10x_dac.h
+│   │   ├── stm32f10x_dbgmcu.h
+│   │   ├── stm32f10x_dma.h
+│   │   ├── stm32f10x_exti.h
+│   │   ├── stm32f10x_flash.h
+│   │   ├── stm32f10x_fsmc.h
+│   │   ├── stm32f10x_gpio.h
+│   │   ├── stm32f10x_i2c.h
+│   │   ├── stm32f10x_iwdg.h
+│   │   ├── stm32f10x_pwr.h
+│   │   ├── stm32f10x_rcc.h
+│   │   ├── stm32f10x_rtc.h
+│   │   ├── stm32f10x_sdio.h
+│   │   ├── stm32f10x_spi.h
+│   │   ├── stm32f10x_tim.h
+│   │   ├── stm32f10x_usart.h
+│   │   └── stm32f10x_wwdg.h
+│   └── src
+│       ├── misc.c
+│       ├── stm32f10x_adc.c
+│       ├── stm32f10x_bkp.c
+│       ├── stm32f10x_can.c
+│       ├── stm32f10x_cec.c
+│       ├── stm32f10x_crc.c
+│       ├── stm32f10x_dac.c
+│       ├── stm32f10x_dbgmcu.c
+│       ├── stm32f10x_dma.c
+│       ├── stm32f10x_exti.c
+│       ├── stm32f10x_flash.c
+│       ├── stm32f10x_fsmc.c
+│       ├── stm32f10x_gpio.c
+│       ├── stm32f10x_i2c.c
+│       ├── stm32f10x_iwdg.c
+│       ├── stm32f10x_pwr.c
+│       ├── stm32f10x_rcc.c
+│       ├── stm32f10x_rtc.c
+│       ├── stm32f10x_sdio.c
+│       ├── stm32f10x_spi.c
+│       ├── stm32f10x_tim.c
+│       ├── stm32f10x_usart.c
+│       └── stm32f10x_wwdg.c
+├── tree.txt
+└── User
+    ├── main.c
+    ├── stm32f10x_conf.h
+    ├── stm32f10x_it.c
+    ├── stm32f10x_it.h
+    └── syscalls.c
+
+18 directories, 122 files
